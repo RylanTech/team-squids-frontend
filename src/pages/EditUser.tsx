@@ -27,6 +27,7 @@ const EditUser: React.FC = () => {
     password: "",
     firstName: "",
     lastName: "",
+    userType: "user"
   });
 
   useEffect(() => {
