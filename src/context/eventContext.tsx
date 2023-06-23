@@ -97,7 +97,7 @@ export const EventContext = createContext<EventContextProps>({
   searchEvents: (query: string) => Promise.resolve(),
 });
 
-const BASE_URL = "http://localhost:3000/api/event/";
+const BASE_URL = "https://churchhive.net/api/event/";
 
 export const EventProvider = ({ children }: EventContextProviderProps) => {
   const [events, setEvents] = useState<AllEvents[]>([]);
@@ -106,7 +106,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
 
   const getAllEvents = async () => {
     try {
-      const response = await axios.get(BASE_URL);
+      const response = await axios.get("https://churchhive.net/api/event/");
       setEvents(response.data);
     } catch (error: any) {
       throw error.response.statusText;
@@ -120,7 +120,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
   }, []);
 
   const getAllUserEvents = async () => {
-    const UserEventsURL = `${BASE_URL}userevent/${currentUserId}`;
+    const UserEventsURL = `${"https://churchhive.net/api/event/"}userevent/${currentUserId}`;
     try {
       const response = await axios.get(UserEventsURL);
       setUserEvents(response.data);
@@ -137,7 +137,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
 
   const createEvent = async (newEvent: NewEvent) => {
     try {
-      const response = await axios.post(BASE_URL, newEvent, {
+      const response = await axios.post("https://churchhive.net/api/event/", newEvent, {
         headers: authHeader(),
       });
       await Promise.all([getAllEvents(), getAllUserEvents()]);
@@ -148,7 +148,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
   };
 
   const getEvent = async (eventId: number) => {
-    const eventIdURL = `${BASE_URL}${eventId}`;
+    const eventIdURL = `${"https://churchhive.net/api/event/"}${eventId}`;
     try {
       const response = await axios.get(eventIdURL, { headers: authHeader() });
       return response.data;
@@ -158,7 +158,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
   };
 
   const updateEvent = async (updatedEvent: Event) => {
-    const eventIdURL = `${BASE_URL}editevent/${updatedEvent.eventId}`;
+    const eventIdURL = `${"https://churchhive.net/api/event/"}editevent/${updatedEvent.eventId}`;
     try {
       const response = await axios.put(eventIdURL, updatedEvent, {
         headers: authHeader(),
@@ -171,7 +171,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
   };
 
   const deleteEvent = async (eventId: number) => {
-    const eventIdURL = `${BASE_URL}${eventId}`;
+    const eventIdURL = `${"https://churchhive.net/api/event/"}${eventId}`;
     try {
       const response = await axios.delete(eventIdURL, {
         headers: authHeader(),
@@ -187,7 +187,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
     if (query === "") {
       return;
     }
-    const searchEventUrl = `${BASE_URL}search/${query}`;
+    const searchEventUrl = `${"https://churchhive.net/api/event/"}search/${query}`;
     try {
       const response = await axios.get(searchEventUrl);
       setEvents(response.data);
