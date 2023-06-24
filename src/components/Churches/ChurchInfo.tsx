@@ -23,7 +23,6 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
   },
 }) => {
   const { apiKey } = useContext(ChurchUserContext)
-  console.log(apiKey)
 
   const staticMap = `https://maps.googleapis.com/maps/api/staticmap?center=${street},${city},${state}
   &markers=anchor:center%7Cicon:${encodeURIComponent(

@@ -125,7 +125,7 @@ export const ChurchUserProvider = ({
 
   const getApiKey = async (): Promise<void> => {
     try {
-      const response = await axios.get("http://localhost:3000/api/key/");
+      const response = await axios.get("https://churchhive.net/api/key/");
       setApiKey(response.data);
     } catch (error: any) {
       throw error;
