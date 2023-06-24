@@ -77,7 +77,7 @@ export const ChurchContext = createContext<ChurchContextProps>({
   searchChurches: (query: string) => Promise.resolve(),
 });
 
-const BASE_URL = "https://churchhive.enet/api/event/";
+const BASE_URL = "https://churchhive.net/api/church";
 
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   const [churches, setChurches] = useState<AllChurches[]>([]);

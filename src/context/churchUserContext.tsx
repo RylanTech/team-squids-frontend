@@ -43,6 +43,8 @@ interface decoded {
 
 interface ChurchUserContextProps {
   currentUserId: number;
+  apiKey: any;
+  getApiKey: () => Promise<void>;
   setCurrentUserId: Dispatch<SetStateAction<number>>;
   verifyCurrentUser: () => Promise<decoded | null>;
   createChurchUser: (newUser: NewChurchUser) => Promise<NewChurchUser>;
@@ -61,6 +63,8 @@ interface ChurchUserContextProviderProps {
 
 export const ChurchUserContext = createContext<ChurchUserContextProps>({
   currentUserId: 0,
+  apiKey: "apiKey",
+  getApiKey: () => Promise.resolve(), // Update the implementation to return a Promise<string>
   setCurrentUserId: () => {},
   verifyCurrentUser: () => Promise.resolve(null),
   createChurchUser: (newUser: NewChurchUser) => Promise.resolve(newUser),
@@ -73,7 +77,8 @@ export const ChurchUserContext = createContext<ChurchUserContextProps>({
   isLoggedIn: false,
 });
 
-const BASE_URL = "https://churchhive.enet/api/event/";
+
+const BASE_URL = "https://churchhive.net/api/user/";
 
 export const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("myChurchUserToken")}`,
@@ -84,6 +89,7 @@ export const ChurchUserProvider = ({
 }: ChurchUserContextProviderProps) => {
   const [currentUserId, setCurrentUserId] = useState<number>(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [apiKey, setApiKey] = useState<string>()
 
   const verifyCurrentUser = async () => {
     const LOGIN_TOKEN = localStorage.getItem("myChurchUserToken");
@@ -116,6 +122,16 @@ export const ChurchUserProvider = ({
       }
     }
   };
+
+  const getApiKey = async (): Promise<void> => {
+    try {
+      const response = await axios.get("http://localhost:3000/api/key/");
+      setApiKey(response.data);
+    } catch (error: any) {
+      throw error;
+    }
+  };
+  
 
   const createChurchUser = async (newUser: NewChurchUser) => {
     const newUserURL = `${BASE_URL}create-account`;
@@ -203,6 +219,8 @@ export const ChurchUserProvider = ({
     <ChurchUserContext.Provider
       value={{
         currentUserId,
+        apiKey,
+        getApiKey,
         setCurrentUserId,
         verifyCurrentUser,
         createChurchUser,
