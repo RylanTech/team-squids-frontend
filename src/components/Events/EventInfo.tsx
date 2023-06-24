@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { IonCol, IonImg, IonRow, IonText } from "@ionic/react";
 import { OneEvent } from "../../context/eventContext";
 import styles from "../../theme/info.module.css";
+import { ChurchUserContext } from "../../context/churchUserContext";
 
 interface EventInfoProps {
   data: OneEvent;
@@ -33,7 +34,7 @@ const EventInfo: React.FC<EventInfoProps> = ({
   const eventDay = isoDate ? formatDay.format(isoDate) : "";
   const eventTime = isoDate ? formatTime.format(isoDate) : "";
 
-  const apiKey = "AIzaSyBzMxAntTwImXe9Du0J042nG09954Ww980";
+  const { apiKey } = useContext(ChurchUserContext)
 
   const staticMap = `https://maps.googleapis.com/maps/api/staticmap?center=${street},${city},${state}
   &markers=anchor:center%7Cicon:${encodeURIComponent(
