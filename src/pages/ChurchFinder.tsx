@@ -13,9 +13,18 @@ import {
 import ChurchList from "../components/Churches/ChurchList";
 import { ChurchContext } from "../context/churchContext";
 import { trashBin } from "ionicons/icons";
+import { ChurchUserContext } from "../context/churchUserContext";
 
 const ChurchFinder: React.FC = () => {
   const { searchChurches, churches, getAllChurches } = useContext(ChurchContext);
+  const { getApiKey } = useContext(ChurchUserContext)
+
+  useEffect(() => {
+    function getKey() {
+      getApiKey()
+    }
+    getKey()
+  },[])
 
   const handleSearch = async (searchQuery: string) => {
     // Call function to search locations base on query

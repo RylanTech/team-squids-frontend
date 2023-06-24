@@ -97,7 +97,7 @@ export const EventContext = createContext<EventContextProps>({
   searchEvents: (query: string) => Promise.resolve(),
 });
 
-const BASE_URL = "https://churchhive.enet/api/event/";
+const BASE_URL = "https://churchhive.net/api/event/";
 
 export const EventProvider = ({ children }: EventContextProviderProps) => {
   const [events, setEvents] = useState<AllEvents[]>([]);
