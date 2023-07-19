@@ -10,7 +10,7 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { calendar, settings, home } from "ionicons/icons";
+import { calendar, settings, home, star, starHalf, starHalfOutline, starHalfSharp, starSharp } from "ionicons/icons";
 
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/normalize.css";
@@ -37,6 +37,7 @@ import EditChurch from "./pages/EditChurch";
 import EditEvent from "./pages/EditEvent";
 import UserAuth from "./pages/UserAuth";
 import EditUser from "./pages/EditUser";
+import Favorites from "./pages/Favorites";
 
 setupIonicReact();
 
@@ -61,6 +62,8 @@ const App: React.FC = () => {
             <Route path="/edit-user/:userId" exact component={EditUser} />
             <Route path="/user/:userId" exact component={ChurchUserProfile} />
             <Route path="/users" component={UserAuth} />
+
+            <Route path="/favorites" component={Favorites} />
             
             <Route exact path="/" render={() => <Redirect to="/churches" />} />
 
@@ -70,9 +73,13 @@ const App: React.FC = () => {
               <IonIcon aria-hidden="true" icon={home} />
               <IonLabel>Churches</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="events" href="/events">
+            <IonTabButton tab="favorites" href="/events">
               <IonIcon aria-hidden="true" icon={calendar} />
               <IonLabel>Events</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="events" href="/favorites">
+              <IonIcon aria-hidden="true" icon={star} />
+              <IonLabel>Favorites</IonLabel>
             </IonTabButton>
             {!currentUserId && (
               <IonTabButton tab="user" href="/users">

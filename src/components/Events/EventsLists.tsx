@@ -10,11 +10,11 @@ interface EventListProps {
 
 const EventsList: React.FC<EventListProps> = ({ events }) => {
   return (
-    <IonList>
+      <>
       {events.map((event) => (
         <EventItem event={event} key={event.eventId} />
       ))}
-    </IonList>
+      </>
   );
 };
 

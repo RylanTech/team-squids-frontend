@@ -53,6 +53,7 @@ export interface OneChurch extends Church {
 
 interface ChurchContextProps {
   churches: AllChurches[];
+  getFavChurches: () => Promise<void>;
   setChurches: Dispatch<SetStateAction<AllChurches[]>>;
   getAllChurches: () => Promise<void>;
   createChurch: (newChurch: NewChurch) => Promise<NewChurch>;
@@ -68,6 +69,7 @@ interface ChurchContextProviderProps {
 
 export const ChurchContext = createContext<ChurchContextProps>({
   churches: [],
+  getFavChurches: () => Promise.resolve(),
   setChurches: () => {},
   getAllChurches: () => Promise.resolve(),
   createChurch: (newChurch: NewChurch) => Promise.resolve(newChurch),
@@ -114,6 +116,18 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
     const churchIdURL = `${BASE_URL}${churchId}`;
     try {
       const response = await axios.get(churchIdURL);
+      return await response.data;
+    } catch (error: any) {
+      throw error.response.statusText;
+    }
+  };
+
+  const getFavChurches = async () => {
+    const favorites = localStorage.getItem("favoriteChurches")
+    
+    const favURL = `${BASE_URL}favorites/`;
+    try {
+      const response = await axios.get(favURL, );
       return await response.data;
     } catch (error: any) {
       throw error.response.statusText;
@@ -169,6 +183,7 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
     <ChurchContext.Provider
       value={{
         churches,
+        getFavChurches,
         setChurches,
         getAllChurches,
         createChurch,
