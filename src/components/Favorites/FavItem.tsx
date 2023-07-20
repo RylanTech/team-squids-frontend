@@ -83,6 +83,7 @@ const FavItem: React.FC<ContainerProps> = ({
 
   return (
     <>
+      <IonList>
       <IonItem
         routerLink={`/church/${churchId}`}
         button
@@ -109,6 +110,7 @@ const FavItem: React.FC<ContainerProps> = ({
         <br />
       </IonItem>
       {FavEventList()}
+      </IonList>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useFetchChurch } from "../hooks/useFetchChurch";
 import LoadingSpinner from "../components/Global/LoadingSpinner";
@@ -28,9 +28,24 @@ const ChurchProfile: React.FC = () => {
   const { deleteChurch } = useContext(ChurchContext);
   const { deleteEvent } = useContext(EventContext);
   const { currentUserId } = useContext(ChurchUserContext);
+  const [churches, setChurches] = useState<Array<number>>([]);
+  const [isFavoriteChurch, setIsFavoriteChurch] = useState(false)
   const { church, loadingStatus, error } = useFetchChurch(
     parseInt(params.churchId)
   );
+
+  useEffect(() => {
+    let favChurches: string | null = localStorage.getItem("favoriteChurches");
+    if (favChurches !== null) {
+      const parsedChurches: Array<number> = JSON.parse(favChurches);
+      setChurches(parsedChurches);
+      console.log(params.churchId);
+      if (parsedChurches.includes(parseInt(params.churchId))) {
+        setIsFavoriteChurch(true);
+      }
+    }
+  }, []);
+  
 
   async function handleDeleteChurchAndEvents(
     events: AllEvents[],
@@ -45,6 +60,20 @@ const ChurchProfile: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  function addFavorite() {
+    setIsFavoriteChurch(true);
+    setChurches((prevChurches) => [...prevChurches, parseInt(params.churchId)]);
+    console.log(churches)
+  }
+  
+  function removeFavorite() {
+    setIsFavoriteChurch(false);
+    setChurches((prevChurches) =>
+      prevChurches.filter((churchId) => churchId !== parseInt(params.churchId))
+    );
+    console.log(churches)
   }
 
   return (
@@ -107,6 +136,20 @@ const ChurchProfile: React.FC = () => {
                 </IonButton>
               </IonCol>
             )}
+            <IonCol size="12">
+              <IonButton
+                id="setFav"
+                color="secondary"
+                fill="outline"
+                expand="block"
+                onClick={() =>
+                  isFavoriteChurch ? removeFavorite() : addFavorite()
+                }
+              >
+                {isFavoriteChurch ? "Add Favorite" : "Remove Favorite"}
+              </IonButton>
+            </IonCol>
+
           </IonRow>
         </IonGrid>
       </IonContent>

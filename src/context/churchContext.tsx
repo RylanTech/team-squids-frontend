@@ -103,6 +103,7 @@ const BASE_URL = "http://localhost:3000/api/church/";
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   const [churches, setChurches] = useState<AllChurches[]>([]);
   const [favoriteChurches, setFavoriteChurches] = useState<AllChurches[]>([]);
+  const [favoriteChurchesArray, setFavoriteChurchesArray] = useState<number[]>([]);
   const { currentUserId, getChurchUser } = useContext(ChurchUserContext);
 
   const getAllChurches = async () => {
@@ -117,8 +118,15 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   useEffect(() => {
     (async () => {
       await getAllChurches();
+      // saveFavChurches()
     })();
   }, []);
+
+  // const saveFavChurches = async () => {
+  //   let myArray = [1,2,3,4];
+  //   let churchArray = JSON.stringify(myArray)
+  //   localStorage.setItem("favoriteChurches", churchArray)
+  // };
 
   const createChurch = async (newChurch: NewChurch) => {
     try {

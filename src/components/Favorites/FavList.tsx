@@ -11,11 +11,14 @@ const FavList: FC<ChurchListProps> = ( { churches } ) => {
 
   return (
       <>
-      {churches.map((church) => (
-        
-        <FavItem church={church} key={church.churchId} />
-      
-      ))}
+      {churches.map((church) => {
+        return (
+          <>
+          <FavItem church={church} key={church.churchId} />
+          <br/>
+          </>
+        )
+      })}
       </>
   );
 };
