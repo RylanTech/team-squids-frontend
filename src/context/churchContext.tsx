@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { ChurchUser, ChurchUserContext, authHeader } from "./churchUserContext";
-import { AllEvents } from "./eventContext";
+import { AllEvents, Event } from "./eventContext";
 import Location from "../interfaces/Location";
 import { queryAllByAltText } from "@testing-library/react";
 
@@ -25,6 +25,23 @@ export interface Church {
   serviceTime: string;
   imageUrl: string;
   website: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface ChurchWithEvents {
+  churchId: number;
+  userId: number;
+  churchName: string;
+  denomination: string;
+  location: Location;
+  phoneNumber: string;
+  churchEmail: string;
+  welcomeMessage: string;
+  serviceTime: string;
+  imageUrl: string;
+  website: string;
+  Events?: Event[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -53,6 +70,8 @@ export interface OneChurch extends Church {
 
 interface ChurchContextProps {
   churches: AllChurches[];
+  favoriteChurches: AllChurches[];
+  getFavChurches: () => Promise<void>;
   setChurches: Dispatch<SetStateAction<AllChurches[]>>;
   getAllChurches: () => Promise<void>;
   createChurch: (newChurch: NewChurch) => Promise<NewChurch>;
@@ -68,6 +87,8 @@ interface ChurchContextProviderProps {
 
 export const ChurchContext = createContext<ChurchContextProps>({
   churches: [],
+  favoriteChurches: [],
+  getFavChurches: () => Promise.resolve(),
   setChurches: () => {},
   getAllChurches: () => Promise.resolve(),
   createChurch: (newChurch: NewChurch) => Promise.resolve(newChurch),
@@ -77,10 +98,11 @@ export const ChurchContext = createContext<ChurchContextProps>({
   searchChurches: (query: string) => Promise.resolve(),
 });
 
-const BASE_URL = "https://churchhive.net/api/church/";
+const BASE_URL = "http://localhost:3000/api/church/";
 
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   const [churches, setChurches] = useState<AllChurches[]>([]);
+  const [favoriteChurches, setFavoriteChurches] = useState<AllChurches[]>([]);
   const { currentUserId, getChurchUser } = useContext(ChurchUserContext);
 
   const getAllChurches = async () => {
@@ -118,6 +140,25 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
     } catch (error: any) {
       throw error.response.statusText;
     }
+  };
+
+  const getFavChurches = async () => {
+    const favorites = localStorage.getItem("favoriteChurches");
+    if (favorites) {
+      let favoritesArray = JSON.parse(favorites)
+      const favURL = `${BASE_URL}favorites/`;
+      console.log(favoritesArray)
+      try {
+        const response = await axios.post(favURL, { ids: favoritesArray });
+        setFavoriteChurches(response.data);
+        return await response.data;
+      } catch (error: any) {
+        throw error.response.statusText;
+      }
+    } else {
+      return "No Favorites"
+    }
+
   };
 
   const updateChurch = async (updatedChurch: Church) => {
@@ -169,6 +210,8 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
     <ChurchContext.Provider
       value={{
         churches,
+        favoriteChurches,
+        getFavChurches,
         setChurches,
         getAllChurches,
         createChurch,

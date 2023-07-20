@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import { useFetchChurch } from "../hooks/useFetchChurch";
 import LoadingSpinner from "../components/Global/LoadingSpinner";
@@ -28,9 +28,27 @@ const ChurchProfile: React.FC = () => {
   const { deleteChurch } = useContext(ChurchContext);
   const { deleteEvent } = useContext(EventContext);
   const { currentUserId } = useContext(ChurchUserContext);
+  const [churches, setChurches] = useState<Array<number>>([]);
+  const [isFavoriteChurch, setIsFavoriteChurch] = useState(false)
   const { church, loadingStatus, error } = useFetchChurch(
     parseInt(params.churchId)
   );
+
+  useEffect(() => {
+    let favChurches: string | null = localStorage.getItem("favoriteChurches");
+    if (favChurches !== null) {
+      const parsedChurches: Array<number> = JSON.parse(favChurches);
+      setChurches(parsedChurches);
+      console.log(params.churchId);
+      if (parsedChurches.includes(parseInt(params.churchId))) {
+        setIsFavoriteChurch(true);
+      } else {
+        setIsFavoriteChurch(false)
+      }
+    } else {
+      setIsFavoriteChurch(false)
+    }
+  }, []);
 
   async function handleDeleteChurchAndEvents(
     events: AllEvents[],
@@ -45,6 +63,26 @@ const ChurchProfile: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async function addFavorite() {
+    setIsFavoriteChurch(true);
+    const updatedChurches = [...churches, parseInt(params.churchId)];
+    setChurches(updatedChurches)
+    let i = JSON.stringify(updatedChurches)
+    console.log(i)
+    localStorage.setItem("favoriteChurches", i)
+  }
+  
+  async function removeFavorite() {
+    setIsFavoriteChurch(false);
+    const updatedChurches = churches.filter(
+      (churchId) => churchId !== parseInt(params.churchId)
+    );
+    setChurches(updatedChurches)
+    let i = JSON.stringify(updatedChurches)
+    console.log(i)
+    localStorage.setItem("favoriteChurches", i)
   }
 
   return (
@@ -107,6 +145,20 @@ const ChurchProfile: React.FC = () => {
                 </IonButton>
               </IonCol>
             )}
+            <IonCol size="12">
+              <IonButton
+                id="setFav"
+                color="secondary"
+                fill="outline"
+                expand="block"
+                onClick={() =>
+                  isFavoriteChurch ? removeFavorite() : addFavorite()
+                }
+              >
+                {isFavoriteChurch ? "Remove Favorite" : "Add Favorite"}
+              </IonButton>
+            </IonCol>
+
           </IonRow>
         </IonGrid>
       </IonContent>

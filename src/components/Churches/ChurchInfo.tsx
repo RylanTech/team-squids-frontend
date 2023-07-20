@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { IonCol, IonImg, IonRow, IonText } from "@ionic/react";
 import { OneChurch } from "../../context/churchContext";
 import styles from "../../theme/info.module.css";
@@ -23,12 +23,22 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
   },
 }) => {
   const { apiKey } = useContext(ChurchUserContext)
+  const [favoriteChurches, setFavoriteChurches] = useState<any>()
 
   const staticMap = `https://maps.googleapis.com/maps/api/staticmap?center=${street},${city},${state}
   &markers=anchor:center%7Cicon:${encodeURIComponent(
     `https://i.postimg.cc/jdQN86ss/church-hive-icon-32.png`
   )}|${encodeURIComponent(`${street},${city},${state}`)}
     &zoom=13&size=400x300&key=${apiKey}`;
+
+  useEffect(() => {
+    let favChurches: string | null = localStorage.getItem("favoriteChurches")
+    if (favChurches !== null) {
+      let churches = JSON.parse(favChurches)
+      console.log(churches)
+      setFavoriteChurches(churches)
+    }
+  }, []);
 
   return (
     <IonRow className={styles.light}>
@@ -43,14 +53,14 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
       </IonCol>
       <IonCol size="12">
         <h4>Service Times</h4>
-          <p>{serviceTime}</p>
+        <p>{serviceTime}</p>
       </IonCol>
       <IonCol size="12">
         <h4>Location</h4>
-          <p>
-            {street} <br />
-            {city}, {state} {zip}
-          </p>
+        <p>
+          {street} <br />
+          {city}, {state} {zip}
+        </p>
       </IonCol>
       <IonCol>
         <IonImg src={staticMap} alt="staticMap">
@@ -63,11 +73,11 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
           <p className={styles.link}>{website}</p>
         </a>
 
-          <p>{phoneNumber}</p>
+        <p>{phoneNumber}</p>
       </IonCol>
       <IonCol size="12">
         <h4>Welcome to {churchName}</h4>
-          <p>{welcomeMessage}</p>
+        <p>{welcomeMessage}</p>
       </IonCol>
     </IonRow>
   );
