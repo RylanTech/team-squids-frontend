@@ -51,9 +51,10 @@ const FavItem: React.FC<ContainerProps> = ({
             routerLink={`/event/${event.eventId}`}
             button
             detail={userId !== currentUserId}
+            key={event.eventId}
           >
             <IonThumbnail slot="start">
-              <img alt={imageUrl} src={imageUrl} />
+              <img alt={event.imageUrl} src={event.imageUrl} />
             </IonThumbnail>
             <IonLabel>
               <h2>{event.eventTitle}</h2>
@@ -81,7 +82,6 @@ const FavItem: React.FC<ContainerProps> = ({
   }
 
   return (
-    <>
       <IonList>
       <IonItem
         routerLink={`/church/${churchId}`}
@@ -110,7 +110,6 @@ const FavItem: React.FC<ContainerProps> = ({
       </IonItem>
       {FavEventList()}
       </IonList>
-    </>
   );
 };
 
