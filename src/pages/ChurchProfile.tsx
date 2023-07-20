@@ -42,7 +42,11 @@ const ChurchProfile: React.FC = () => {
       console.log(params.churchId);
       if (parsedChurches.includes(parseInt(params.churchId))) {
         setIsFavoriteChurch(true);
+      } else {
+        setIsFavoriteChurch(false)
       }
+    } else {
+      setIsFavoriteChurch(false)
     }
   }, []);
   
@@ -62,18 +66,24 @@ const ChurchProfile: React.FC = () => {
     }
   }
 
-  function addFavorite() {
+  async function addFavorite() {
     setIsFavoriteChurch(true);
-    setChurches((prevChurches) => [...prevChurches, parseInt(params.churchId)]);
-    console.log(churches)
+    const updatedChurches = [...churches, parseInt(params.churchId)];
+    setChurches(updatedChurches)
+    let i = JSON.stringify(updatedChurches)
+    console.log(i)
+    localStorage.setItem("favoriteChurches", i)
   }
   
-  function removeFavorite() {
+  async function removeFavorite() {
     setIsFavoriteChurch(false);
-    setChurches((prevChurches) =>
-      prevChurches.filter((churchId) => churchId !== parseInt(params.churchId))
+    const updatedChurches = churches.filter(
+      (churchId) => churchId !== parseInt(params.churchId)
     );
-    console.log(churches)
+    setChurches(updatedChurches)
+    let i = JSON.stringify(updatedChurches)
+    console.log(i)
+    localStorage.setItem("favoriteChurches", i)
   }
 
   return (
@@ -146,7 +156,7 @@ const ChurchProfile: React.FC = () => {
                   isFavoriteChurch ? removeFavorite() : addFavorite()
                 }
               >
-                {isFavoriteChurch ? "Add Favorite" : "Remove Favorite"}
+                {isFavoriteChurch ? "Remove Favorite" : "Add Favorite"}
               </IonButton>
             </IonCol>
 

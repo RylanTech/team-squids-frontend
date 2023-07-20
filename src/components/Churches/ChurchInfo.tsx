@@ -38,7 +38,7 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
       console.log(churches)
       setFavoriteChurches(churches)
     }
-  }, [])
+  }, []);
 
   return (
     <IonRow className={styles.light}>
