@@ -103,7 +103,6 @@ const BASE_URL = "http://localhost:3000/api/church/";
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   const [churches, setChurches] = useState<AllChurches[]>([]);
   const [favoriteChurches, setFavoriteChurches] = useState<AllChurches[]>([]);
-  const [favoriteChurchesArray, setFavoriteChurchesArray] = useState<number[]>([]);
   const { currentUserId, getChurchUser } = useContext(ChurchUserContext);
 
   const getAllChurches = async () => {
@@ -118,15 +117,8 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   useEffect(() => {
     (async () => {
       await getAllChurches();
-      // saveFavChurches()
     })();
   }, []);
-
-  // const saveFavChurches = async () => {
-  //   let myArray = [1,2,3,4];
-  //   let churchArray = JSON.stringify(myArray)
-  //   localStorage.setItem("favoriteChurches", churchArray)
-  // };
 
   const createChurch = async (newChurch: NewChurch) => {
     try {
@@ -152,15 +144,21 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
 
   const getFavChurches = async () => {
     const favorites = localStorage.getItem("favoriteChurches");
-    const favURL = `${BASE_URL}favorites/`;
-
-    try {
-      const response = await axios.get(favURL);
-      setFavoriteChurches(response.data);
-      return await response.data;
-    } catch (error: any) {
-      throw error.response.statusText;
+    if (favorites) {
+      let favoritesArray = JSON.parse(favorites)
+      const favURL = `${BASE_URL}favorites/`;
+      console.log(favoritesArray)
+      try {
+        const response = await axios.post(favURL, { ids: favoritesArray });
+        setFavoriteChurches(response.data);
+        return await response.data;
+      } catch (error: any) {
+        throw error.response.statusText;
+      }
+    } else {
+      return "No Favorites"
     }
+
   };
 
   const updateChurch = async (updatedChurch: Church) => {

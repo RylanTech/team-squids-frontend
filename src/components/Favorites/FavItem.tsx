@@ -27,8 +27,7 @@ const FavItem: React.FC<ContainerProps> = ({
   },
 }) => {
   const { currentUserId } = useContext(ChurchUserContext);
-
-  console.log(Events)
+  
   function FavEventList() {
     if (Events) {
       return Events.map((event) => {

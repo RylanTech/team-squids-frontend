@@ -49,7 +49,6 @@ const ChurchProfile: React.FC = () => {
       setIsFavoriteChurch(false)
     }
   }, []);
-  
 
   async function handleDeleteChurchAndEvents(
     events: AllEvents[],
