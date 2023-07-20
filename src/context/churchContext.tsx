@@ -89,7 +89,7 @@ export const ChurchContext = createContext<ChurchContextProps>({
   churches: [],
   favoriteChurches: [],
   getFavChurches: () => Promise.resolve(),
-  setChurches: () => {},
+  setChurches: () => { },
   getAllChurches: () => Promise.resolve(),
   createChurch: (newChurch: NewChurch) => Promise.resolve(newChurch),
   getChurch: (churchId: number) => Promise.resolve({} as OneChurch),
@@ -98,7 +98,7 @@ export const ChurchContext = createContext<ChurchContextProps>({
   searchChurches: (query: string) => Promise.resolve(),
 });
 
-const BASE_URL = "http://localhost:3000/api/church/";
+const BASE_URL = "https://churchhive.net/api/church/";
 
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   const [churches, setChurches] = useState<AllChurches[]>([]);
@@ -145,18 +145,22 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   const getFavChurches = async () => {
     const favorites = localStorage.getItem("favoriteChurches");
     if (favorites) {
-      let favoritesArray = JSON.parse(favorites)
-      const favURL = `${BASE_URL}favorites/`;
-      console.log(favoritesArray)
-      try {
-        const response = await axios.post(favURL, { ids: favoritesArray });
-        setFavoriteChurches(response.data);
-        return await response.data;
-      } catch (error: any) {
-        throw error.response.statusText;
+      if (favorites.length !== 2) {
+        console.log(favorites.length)
+        let favoritesArray = JSON.parse(favorites)
+        const favURL = `${BASE_URL}favorites/`;
+        try {
+          const response = await axios.post(favURL, { ids: favoritesArray });
+          setFavoriteChurches(response.data);
+          return await response.data;
+        } catch (error: any) {
+          throw error.response.statusText;
+        }
+      } else {
+        return "No Favorite Churches"
       }
     } else {
-      return "No Favorites"
+      return "No Favorite Churches"
     }
 
   };

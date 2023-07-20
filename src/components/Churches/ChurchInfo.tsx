@@ -35,7 +35,6 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
     let favChurches: string | null = localStorage.getItem("favoriteChurches")
     if (favChurches !== null) {
       let churches = JSON.parse(favChurches)
-      console.log(churches)
       setFavoriteChurches(churches)
     }
   }, []);

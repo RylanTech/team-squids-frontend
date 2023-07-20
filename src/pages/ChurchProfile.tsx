@@ -39,7 +39,6 @@ const ChurchProfile: React.FC = () => {
     if (favChurches !== null) {
       const parsedChurches: Array<number> = JSON.parse(favChurches);
       setChurches(parsedChurches);
-      console.log(params.churchId);
       if (parsedChurches.includes(parseInt(params.churchId))) {
         setIsFavoriteChurch(true);
       } else {

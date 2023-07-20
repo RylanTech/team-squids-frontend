@@ -17,13 +17,8 @@ import FavList from "../components/Favorites/FavList";
 import { useParams } from "react-router";
 
 const Favorites: React.FC = () => {
-  interface ChurchRouteParams {
-    churchId: string;
-  }
 
-  const { searchChurches, getFavChurches, churches, favoriteChurches, getAllChurches } = useContext(ChurchContext);
-  const [favorites, setFavorites] = useState()
-  const params = useParams<ChurchRouteParams>();
+  const { searchChurches, getFavChurches, favoriteChurches } = useContext(ChurchContext);
 
   useIonViewWillEnter(() => {
     getFavChurches();
@@ -38,25 +33,38 @@ const Favorites: React.FC = () => {
     await getFavChurches();
   }
 
+  function isFav() {
+    let i = localStorage.getItem("favoriteChurches")
+    if (i !== "[]") {
+      return <FavList churches={favoriteChurches} />
+    } else {
+      return (
+        <center>
+          <h2>No Favorite Churches</h2>
+        </center>
+      )
+    }
+  }
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
           <IonTitle>Favorites</IonTitle>
         </IonToolbar>
-        <IonToolbar color="primary">
+        {/* <IonToolbar color="primary">
           <IonSearchbar 
           onIonChange={(e) => handleSearch(e.detail.value!)}
           onIonClear={handleClear}
           clearIcon={trashBin} 
           ></IonSearchbar>
-        </IonToolbar>
+        </IonToolbar> */}
       </IonHeader>
       <IonContent fullscreen>
         <IonGrid>
           <IonRow>
             <IonCol size="12">
-              <FavList churches={favoriteChurches} />
+              {isFav()}
             </IonCol>
           </IonRow>
         </IonGrid>
