@@ -16,7 +16,12 @@ import { trashBin } from "ionicons/icons";
 import FavList from "../components/Favorites/FavList";
 
 const Favorites: React.FC = () => {
-  const { searchChurches, getFavChurches, churches, getAllChurches } = useContext(ChurchContext);
+  const { searchChurches, getFavChurches, churches, favoriteChurches, getAllChurches } = useContext(ChurchContext);
+  const [favorites, setFavorites] = useState()
+
+  useEffect(() => {
+    getFavChurches()
+  }, [])
 
   const handleSearch = async (searchQuery: string) => {
     // Call function to search locations base on query
@@ -24,7 +29,7 @@ const Favorites: React.FC = () => {
   };
 
   const handleClear = async () => {
-    await getAllChurches();
+    await getFavChurches();
   }
 
   return (
@@ -45,7 +50,7 @@ const Favorites: React.FC = () => {
         <IonGrid>
           <IonRow>
             <IonCol size="12">
-              <FavList churches={churches} />
+              <FavList churches={favoriteChurches} />
             </IonCol>
           </IonRow>
         </IonGrid>
