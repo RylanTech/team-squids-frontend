@@ -1,10 +1,9 @@
 import React, { useContext } from "react";
 import { IonIcon, IonItem, IonLabel, IonList, IonThumbnail } from "@ionic/react";
 import { createOutline } from "ionicons/icons";
-import { Link } from 'react-router-dom';
-import { Church, ChurchWithEvents } from "../../context/churchContext";
+import { ChurchWithEvents } from "../../context/churchContext";
 import { ChurchUserContext } from "../../context/churchUserContext";
-import EventItem from "../Events/EventItem";
+import { Event } from "../../context/eventContext";
 
 interface ContainerProps {
   church: ChurchWithEvents;
@@ -27,11 +26,25 @@ const FavItem: React.FC<ContainerProps> = ({
   },
 }) => {
   const { currentUserId } = useContext(ChurchUserContext);
-  
+
   function FavEventList() {
+    function ifImg(event: Event) {
+      if (event.imageUrl === "blank") {
+        return (
+          <></>
+        )
+      } else {
+        return (
+          <IonThumbnail slot="start">
+            <img alt={event.imageUrl} src={event.imageUrl} />
+          </IonThumbnail>
+        )
+      }
+    }
+
     if (Events) {
       return Events.map((event) => {
-        
+
         const isoDate = new Date(event.date);
         const formatDate = Intl.DateTimeFormat("en-us", {
           dateStyle: "long",
@@ -45,7 +58,7 @@ const FavItem: React.FC<ContainerProps> = ({
         const eventDate = formatDate.format(isoDate);
         const eventDay = formatDay.format(isoDate);
         const eventTime = formatTime.format(isoDate);
-        
+
         return (
           <IonItem
             routerLink={`/event/${event.eventId}`}
@@ -53,12 +66,9 @@ const FavItem: React.FC<ContainerProps> = ({
             detail={userId !== currentUserId}
             key={event.eventId}
           >
-            <IonThumbnail slot="start">
-              <img alt={event.imageUrl} src={event.imageUrl} />
-            </IonThumbnail>
+            {ifImg(event)}
             <IonLabel>
               <h2>{event.eventTitle}</h2>
-              <p>{churchName}</p>
             </IonLabel>
             <IonLabel slot="end">
               <p>{eventDay}</p>
@@ -82,7 +92,7 @@ const FavItem: React.FC<ContainerProps> = ({
   }
 
   return (
-      <IonList>
+    <IonList>
       <IonItem
         routerLink={`/church/${churchId}`}
         button
@@ -109,7 +119,7 @@ const FavItem: React.FC<ContainerProps> = ({
         <br />
       </IonItem>
       {FavEventList()}
-      </IonList>
+    </IonList>
   );
 };
 

@@ -122,6 +122,9 @@ const EditEvent: React.FC = () => {
       description: currentEvent.description,
       imageUrl: currentEvent.imageUrl,
     };
+    if (updatedEvent.imageUrl === "") {
+      updatedEvent.imageUrl = "blank"
+    }
     event.preventDefault();
     await updateEvent(updatedEvent);
     history.push(`/user/${currentUserId}`);
