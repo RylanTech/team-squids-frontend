@@ -90,6 +90,12 @@ const AddEvent: React.FC = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+    if (newEvent.imageUrl === "") {
+      setNewEvent(prevEvent => ({
+        ...prevEvent,
+        imageUrl: "blank"
+      }));
+    }
     let resp = await createEvent(newEvent);
     if (resp) {
       setMessage("")
