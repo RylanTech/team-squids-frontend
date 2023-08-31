@@ -24,8 +24,7 @@ import styles from "../theme/forms.module.css";
 const AddEvent: React.FC = () => {
   const { createEvent } = useContext(EventContext);
   const { currentUserId } = useContext(ChurchUserContext);
-  const { churchUser, loadingStatus, error } =
-    useFetchChurchUser(currentUserId);
+  const { churchUser } = useFetchChurchUser(currentUserId);
   const today: Date = new Date();
 
   const [newEvent, setNewEvent] = useState<NewEvent>({
@@ -90,20 +89,22 @@ const AddEvent: React.FC = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
+    let evnt = newEvent
     if (newEvent.imageUrl === "") {
-      setNewEvent(prevEvent => ({
-        ...prevEvent,
-        imageUrl: "blank"
-      }));
+      evnt.imageUrl = "blank"
     }
-    let resp = await createEvent(newEvent);
+    Submit(evnt)
+  };
+
+  async function Submit(evnt: any) {
+    let resp = await createEvent(evnt);
     if (resp) {
       setMessage("")
       history.push(`/events`);
     } else {
       setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
     }
-  };
+  }
 
   const isFieldTouched = (name: string) => {
     return touchedFields.includes(name);
