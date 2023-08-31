@@ -183,7 +183,6 @@ export const ChurchUserProvider = ({
       if (response.status === 200) {
         localStorage.setItem("myChurchUserToken", response.data.token);
         await verifyCurrentUser();
-        console.log(currentUserId);
         setIsLoggedIn(true);
         return response.data;
       } else {
@@ -192,7 +191,8 @@ export const ChurchUserProvider = ({
       }
     } catch (error: any) {
       setIsLoggedIn(false);
-      throw new Error(error.response?.data?.message || "Unable to log in.");
+      // throw new Error(error.response?.data?.message || "Unable to log in.");
+      return
     }
   };
 

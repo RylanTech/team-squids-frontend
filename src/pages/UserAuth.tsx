@@ -22,9 +22,9 @@ const UserAuth: React.FC = () => {
                 <IonImg src="/svg/church_hive_icon.svg" className={styles.logo}/>
                 <h1 className={styles.title}>Church<span className={styles.titleSpan}>Hive</span></h1>
               </div>
-              <center>
+              {/* <center>
                 <p className={styles.loginTitle}>Login</p>
-              </center>
+              </center> */}
             </IonCol>
           </IonRow>
           <LoginAccount/>

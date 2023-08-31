@@ -88,16 +88,16 @@ const FavItem: React.FC<ContainerProps> = ({
         button
         detail={userId !== currentUserId}
       >
-        <IonThumbnail slot="start">
+        {/* <IonThumbnail slot="start">
           <img alt="Church photo" src={imageUrl} />
-        </IonThumbnail>
+        </IonThumbnail> */}
         <IonLabel>
           <h2>{churchName}</h2>
-          {city && state && (
+          {/* {city && state && (
             <p>
               {city}, {state}
             </p>
-          )}
+          )} */}
         </IonLabel>
         {userId === currentUserId && (
           <IonIcon

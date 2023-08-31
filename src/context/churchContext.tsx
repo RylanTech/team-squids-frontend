@@ -126,9 +126,10 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
         headers: authHeader(),
       });
       await Promise.all([getAllChurches(), getChurchUser(currentUserId)]);
-      return await response.data;
+      return response.data;
     } catch (error: any) {
-      throw error.response.statusText;
+      // throw error.response.statusText;
+      return
     }
   };
 
@@ -146,7 +147,6 @@ export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
     const favorites = localStorage.getItem("favoriteChurches");
     if (favorites) {
       if (favorites.length !== 2) {
-        console.log(favorites.length)
         let favoritesArray = JSON.parse(favorites)
         const favURL = `${BASE_URL}favorites/`;
         try {

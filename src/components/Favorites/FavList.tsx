@@ -1,5 +1,4 @@
-import React, { FC, useContext } from "react";
-import { IonList } from "@ionic/react";
+import { FC } from "react";
 import { AllChurches } from "../../context/churchContext";
 import FavItem from "./FavItem";
 
@@ -13,10 +12,10 @@ const FavList: FC<ChurchListProps> = ( { churches } ) => {
       <>
       {churches.map((church) => {
         return (
-          <>
-          <FavItem church={church} key={church.churchId} />
+          <div key={church.churchId}>
+          <FavItem church={church} />
           <br/>
-          </>
+          </div>
         )
       })}
       </>
