@@ -19,7 +19,14 @@ const EventInfo: React.FC<EventInfoProps> = ({
     Church,
   },
 }) => {
-  const isoDate = date ? new Date(date) : null;
+  function convertUtcToLocal(utcDateString: any) {
+    const utcDate = new Date(utcDateString);
+    const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+    return localDate;
+  }
+
+  const thisIsoDate = new Date(convertUtcToLocal(date))
+  const isoDate = new Date(thisIsoDate);
   const formatDate = Intl.DateTimeFormat("en-us", {
     dateStyle: "long",
   });
@@ -42,7 +49,7 @@ const EventInfo: React.FC<EventInfoProps> = ({
   )}|${encodeURIComponent(`${street},${city},${state}`)}
     &zoom=13&size=400x300&key=${apiKey}`;
 
-  function ifImg()  {
+  function ifImg() {
     if (imageUrl === "blank") {
       return (
         <></>
