@@ -27,6 +27,12 @@ const FavItem: React.FC<ContainerProps> = ({
 }) => {
   const { currentUserId } = useContext(ChurchUserContext);
 
+  function convertUtcToLocal(utcDateString: any) {
+    const utcDate = new Date(utcDateString);
+    const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+    return localDate;
+  }
+
   function FavEventList() {
     function ifImg(event: Event) {
       if (event.imageUrl === "blank") {
@@ -43,9 +49,14 @@ const FavItem: React.FC<ContainerProps> = ({
     }
 
     if (Events) {
+      function sortByDate(events: Event[]): Event[] {
+        return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      }
+      Events = sortByDate(Events)
       return Events.map((event) => {
 
-        const isoDate = new Date(event.date);
+        const thisIsoDate = new Date(convertUtcToLocal(event.date))
+        const isoDate = new Date(thisIsoDate);
         const formatDate = Intl.DateTimeFormat("en-us", {
           dateStyle: "long",
         });

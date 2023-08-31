@@ -19,8 +19,14 @@ const EventItem: React.FC<ContainerProps> = ({
   },
 }) => {
   const { currentUserId } = useContext(ChurchUserContext);
+  function convertUtcToLocal(utcDateString: any) {
+    const utcDate = new Date(utcDateString);
+    const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
+    return localDate;
+  }
 
-  const isoDate = new Date(date);
+  const thisIsoDate = new Date(convertUtcToLocal(date))
+  const isoDate = new Date(thisIsoDate);
   const formatDate = Intl.DateTimeFormat("en-us", {
     dateStyle: "long",
   });
