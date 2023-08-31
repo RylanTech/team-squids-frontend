@@ -41,10 +41,24 @@ const EventInfo: React.FC<EventInfoProps> = ({
     `https://i.postimg.cc/jdQN86ss/church-hive-icon-32.png`
   )}|${encodeURIComponent(`${street},${city},${state}`)}
     &zoom=13&size=400x300&key=${apiKey}`;
+
+  function ifImg()  {
+    if (imageUrl === "blank") {
+      return (
+        <></>
+      )
+    } else {
+      return (
+        <IonImg className={styles.heroImg} src={imageUrl} alt={eventTitle} />
+      )
+    }
+  }
+
+
   return (
     <IonRow className={styles.light}>
       <IonCol size="12">
-        <IonImg className={styles.heroImg} src={imageUrl} alt={eventTitle} />
+        {ifImg()}
       </IonCol>
       <IonCol size="12">
         <IonText color="secondary">

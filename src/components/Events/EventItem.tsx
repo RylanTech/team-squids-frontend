@@ -34,15 +34,27 @@ const EventItem: React.FC<ContainerProps> = ({
   const eventDay = formatDay.format(isoDate);
   const eventTime = formatTime.format(isoDate);
 
+  function ifImg()  {
+    if (imageUrl === "blank") {
+      return (
+        <></>
+      )
+    } else {
+      return (
+        <IonThumbnail slot="start">
+          <img alt={imageUrl} src={imageUrl} />
+        </IonThumbnail>
+      )
+    }
+  }
+
   return (
     <IonItem
       routerLink={`/event/${eventId}`}
       button
       detail={userId !== currentUserId}
     >
-      <IonThumbnail slot="start">
-        <img alt={imageUrl} src={imageUrl} />
-      </IonThumbnail>
+      {ifImg()}
       <IonLabel>
         <h2>{eventTitle}</h2>
         <p>{churchName}</p>
