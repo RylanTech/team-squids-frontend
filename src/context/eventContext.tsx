@@ -143,7 +143,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
       await Promise.all([getAllEvents(), getAllUserEvents()]);
       return response.data;
     } catch (error: any) {
-      throw error.response.statusText;
+      return
     }
   };
 

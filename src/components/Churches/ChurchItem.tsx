@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { IonIcon, IonItem, IonLabel, IonThumbnail } from "@ionic/react";
 import { createOutline } from "ionicons/icons";
-import { Link } from 'react-router-dom';
 import { Church } from "../../context/churchContext";
 import { ChurchUserContext } from "../../context/churchUserContext";
 

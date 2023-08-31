@@ -46,6 +46,7 @@ const AddEvent: React.FC = () => {
   const [localDate, setLocalDate] = useState<string>("");
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>()
 
   const history = useHistory();
 
@@ -89,8 +90,13 @@ const AddEvent: React.FC = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    await createEvent(newEvent);
-    history.push(`/events`);
+    let resp = await createEvent(newEvent);
+    if (resp) {
+      setMessage("")
+      history.push(`/events`);
+    } else {
+      setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
+    }
   };
 
   const isFieldTouched = (name: string) => {
@@ -111,11 +117,17 @@ const AddEvent: React.FC = () => {
                 />
               </div>
             </IonCol>
+          </IonRow>
+          <center>
+            <p className={styles.loginTitle}>
+              {message}
+            </p>
+          </center>
+          <IonRow>
             <IonCol size="12">
               <IonSelect
-                className={`ion-input-field ${
-                  isFieldTouched("churchId") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("churchId") ? "" : "ion-untouched"
+                  }`}
                 placeholder="Select Church"
                 label="Church"
                 labelPlacement="floating"
@@ -138,9 +150,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("eventTitle") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("eventTitle") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Event Title"
@@ -160,9 +171,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("date") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 placeholder=""
@@ -189,9 +199,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("location.street") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("location.street") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Street"
@@ -211,9 +220,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("location.city") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("location.city") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="City"
@@ -233,9 +241,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonSelect
-                className={`ion-select-field ${
-                  isFieldTouched("location.state") ? "" : "ion-untouched"
-                }`}
+                className={`ion-select-field ${isFieldTouched("location.state") ? "" : "ion-untouched"
+                  }`}
                 placeholder="Select s State"
                 label="State"
                 labelPlacement="floating"
@@ -322,9 +329,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("location.zip") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("location.zip") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Zip Code"
@@ -344,9 +350,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonSelect
-                className={`ion-input-field ${
-                  isFieldTouched("eventType") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("eventType") ? "" : "ion-untouched"
+                  }`}
                 placeholder="Select Event Type"
                 label="Event Type"
                 labelPlacement="floating"
@@ -369,9 +374,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonTextarea
-                className={`ion-input-field ${
-                  isFieldTouched("description") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("description") ? "" : "ion-untouched"
+                  }`}
                 rows={10}
                 maxlength={1000}
                 label="Description"
@@ -391,9 +395,8 @@ const AddEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("imageUrl") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("imageUrl") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="url"
                 label="Event Image URL"

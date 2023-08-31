@@ -1,4 +1,4 @@
-import { IonCol, IonButton, IonRow, IonInput } from "@ionic/react";
+import { IonCol, IonButton, IonRow, IonInput, IonAlert } from "@ionic/react";
 import { useState, useContext } from "react";
 import { useHistory } from "react-router";
 import {
@@ -12,6 +12,7 @@ const LoginAccount: React.FC = () => {
     email: "",
     password: "",
   });
+  const [message, setMessage] = useState("Login")
 
   const { currentUserId, loginChurchUser, verifyCurrentUser } =
     useContext(ChurchUserContext);
@@ -27,14 +28,14 @@ const LoginAccount: React.FC = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    console.log(loginUser);
-    // await Promise.all([loginChurchUser(loginUser), verifyCurrentUser()]);
     loginChurchUser(loginUser).then((resp) => {
-      history.push(`/user/${resp.userId}`);
-      //history.push(`/churches`);
+      if (resp) {
+        setMessage("Login")
+        history.push(`/user/${resp.userId}`);
+      } else {
+        setMessage("Invalid Email or Password")
+      }
     });
-    console.log(currentUserId);
-    history.push(`/churches`);
   };
 
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
@@ -50,6 +51,12 @@ const LoginAccount: React.FC = () => {
   };
 
   return (
+    <>
+      <center>
+        <p className={styles.loginTitle}>
+          {message}
+        </p>
+      </center>
     <IonRow>
       <IonCol size="12">
         <IonInput
@@ -85,6 +92,13 @@ const LoginAccount: React.FC = () => {
         </IonButton>
       </IonCol>
     </IonRow>
+    <IonAlert
+    trigger="present-alert"
+    header="Alert"
+    sub-header="Important message"
+    message="This is an alert!"
+    />
+    </>
   );
 };
 
