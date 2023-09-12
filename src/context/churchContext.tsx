@@ -11,7 +11,6 @@ import {
 import { ChurchUser, ChurchUserContext, authHeader } from "./churchUserContext";
 import { AllEvents, Event } from "./eventContext";
 import Location from "../interfaces/Location";
-import { queryAllByAltText } from "@testing-library/react";
 
 export interface Church {
   churchId: number;

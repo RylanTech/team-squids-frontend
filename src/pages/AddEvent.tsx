@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   IonCol,
   IonContent,
@@ -13,6 +13,8 @@ import {
   IonDatetime,
   IonModal,
   IonImg,
+  IonCheckbox,
+  IonItem,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import PageHeader from "../components/Global/PageHeader";
@@ -20,13 +22,15 @@ import { EventContext, NewEvent } from "../context/eventContext";
 import { ChurchUserContext } from "../context/churchUserContext";
 import { useFetchChurchUser } from "../hooks/useFetchChurchUser";
 import styles from "../theme/forms.module.css";
+import { Church } from "../context/churchContext";
 
 const AddEvent: React.FC = () => {
-  const { createEvent } = useContext(EventContext);
+  const { createEvent, postImage } = useContext(EventContext);
   const { currentUserId } = useContext(ChurchUserContext);
   const { churchUser } = useFetchChurchUser(currentUserId);
   const today: Date = new Date();
 
+  const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
   const [newEvent, setNewEvent] = useState<NewEvent>({
     churchId: 0,
     eventTitle: "",
@@ -42,6 +46,25 @@ const AddEvent: React.FC = () => {
     imageUrl: "",
   });
 
+  const [church, setChurch] = useState<Church>({
+    churchId: 0,
+    userId: 0,
+    churchName: "",
+    denomination: "",
+    location: {
+      street: "",
+      city: "",
+      state: "",
+      zip: ""
+    },
+    phoneNumber: "",
+    churchEmail: "",
+    welcomeMessage: "",
+    serviceTime: "",
+    imageUrl: "",
+    website: ""
+  })
+
   const [localDate, setLocalDate] = useState<string>("");
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
@@ -49,9 +72,9 @@ const AddEvent: React.FC = () => {
 
   const history = useHistory();
 
-  const handleInputChange = (
+  const handleInputChange = async (
     name: string,
-    value: string | string[] | number | Location
+    value: string | string[] | number | Location | File
   ) => {
     if (name === "date") {
       const isoDate = value as string;
@@ -73,6 +96,29 @@ const AddEvent: React.FC = () => {
           [key]: typeof value === "string" ? (value as string).trim() : value,
         },
       }));
+    } else if (name === "imageFile" && value instanceof File) {
+      const currentTime = new Date().getTime();
+
+      const imageName = `image_${currentTime}-${value.name}`;
+
+      const newFile = new File([value], imageName, {
+        type: value.type,
+      });
+
+      const formData = new FormData();
+      formData.append("image", newFile);
+
+      const imgName = await postImage(formData)
+
+      const imgUrl = `https://churchhive.net${imgName.imageUrl}`
+
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        imageUrl: imgUrl,
+      }));
+
+      setDisplayedImg(imgUrl)
+
     } else {
       setNewEvent((prevEvent) => ({
         ...prevEvent,
@@ -110,6 +156,21 @@ const AddEvent: React.FC = () => {
     return touchedFields.includes(name);
   };
 
+  useEffect(() => {
+    if (churchUser) {
+      const selectedChurch = churchUser.Churches.find(church => church.churchId === newEvent.churchId);
+      if (selectedChurch?.location) {
+        try {
+          selectedChurch.location = JSON.parse(selectedChurch.location); // Parse the JSON string
+          setChurch(selectedChurch);
+        } catch (error) {
+          console.error("Error parsing location JSON:", error);
+        }
+      }
+    }
+  }, [newEvent.churchId]);
+  
+  
   return (
     <IonPage>
       <PageHeader header="Add Event" />
@@ -119,7 +180,7 @@ const AddEvent: React.FC = () => {
             <IonCol size="12">
               <div className={styles.header}>
                 <IonImg
-                  src="/svg/church_hive_icon.svg"
+                  src={displayedImg}
                   className={styles.logo}
                 />
               </div>
@@ -132,6 +193,27 @@ const AddEvent: React.FC = () => {
           </center>
           <IonRow>
             <IonCol size="12">
+              <IonButton
+                className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
+                expand="full"
+                fill="solid"
+                color="primary"
+              >
+                Upload Event Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const selectedFile = e.target.files && e.target.files[0];
+                    if (selectedFile) {
+                      handleInputChange("imageFile", selectedFile);
+                    }
+                  }}
+                  style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                />
+              </IonButton>
+            </IonCol>
+            <IonCol size="12">
               <IonSelect
                 className={`ion-input-field ${isFieldTouched("churchId") ? "" : "ion-untouched"
                   }`}
@@ -139,8 +221,9 @@ const AddEvent: React.FC = () => {
                 label="Church"
                 labelPlacement="floating"
                 value={newEvent.churchId}
-                onIonChange={(e) =>
-                  handleInputChange("churchId", e.detail.value!)
+                onIonChange={(e) => {
+                  handleInputChange("churchId", e.detail.value)
+                }
                 }
                 onBlur={() => handleInputBlur("churchId")}
               >
@@ -155,7 +238,7 @@ const AddEvent: React.FC = () => {
                   ))}
               </IonSelect>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="7">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("eventTitle") ? "" : "ion-untouched"
                   }`}
@@ -165,6 +248,7 @@ const AddEvent: React.FC = () => {
                 labelPlacement="floating"
                 value={newEvent.eventTitle}
                 onIonInput={(e) => {
+                  console.log(church)
                   const inputValue = e.detail.value;
                   if (inputValue) {
                     if (inputValue.slice(-1) === " ") {
@@ -176,7 +260,7 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("eventTitle")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="5">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
                   }`}
@@ -205,6 +289,24 @@ const AddEvent: React.FC = () => {
               </IonModal>
             </IonCol>
             <IonCol size="12">
+              <IonItem>
+                {church.churchId !== 0 ? (
+                  <IonCheckbox justify="space-between"
+                    onClick={() => {
+                      setNewEvent((prevEvent) => ({
+                        ...prevEvent,
+                        location: church.location
+                      }));
+                    }}
+                  >Address is the same as church</IonCheckbox>
+                ) : (
+                  <IonCheckbox justify="space-between"
+                    disabled
+                  >Address is the same as church</IonCheckbox>
+                )}
+              </IonItem>
+            </IonCol>
+            <IonCol size="12">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("location.street") ? "" : "ion-untouched"
                   }`}
@@ -225,7 +327,7 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("location.street")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="7">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("location.city") ? "" : "ion-untouched"
                   }`}
@@ -246,7 +348,7 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("location.city")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="3">
               <IonSelect
                 className={`ion-select-field ${isFieldTouched("location.state") ? "" : "ion-untouched"
                   }`}
@@ -334,13 +436,13 @@ const AddEvent: React.FC = () => {
                 <IonSelectOption value="Wyoming">Wyoming</IonSelectOption>
               </IonSelect>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="2">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("location.zip") ? "" : "ion-untouched"
                   }`}
                 required
                 type="text"
-                label="Zip Code"
+                label="Zip"
                 labelPlacement="floating"
                 value={newEvent.location.zip}
                 onIonInput={(e) => {
@@ -400,7 +502,7 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("description")}
               />
             </IonCol>
-            <IonCol size="12">
+            {/* <IonCol size="12">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("imageUrl") ? "" : "ion-untouched"
                   }`}
@@ -414,7 +516,7 @@ const AddEvent: React.FC = () => {
                 }
                 onBlur={() => handleInputBlur("imageUrl")}
               />
-            </IonCol>
+            </IonCol> */}
             <IonCol size="12">
               <IonButton
                 expand="full"
@@ -427,7 +529,7 @@ const AddEvent: React.FC = () => {
           </IonRow>
         </IonGrid>
       </IonContent>
-    </IonPage>
+    </IonPage >
   );
 };
 

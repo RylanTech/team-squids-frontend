@@ -17,6 +17,7 @@ import PageHeader from "../components/Global/PageHeader";
 import { Church, ChurchContext } from "../context/churchContext";
 import { ChurchUserContext } from "../context/churchUserContext";
 import styles from "../theme/forms.module.css";
+import { EventContext } from "../context/eventContext";
 
 interface EditChurchParams {
   churchId: string;
@@ -24,8 +25,11 @@ interface EditChurchParams {
 
 const EditChurch: React.FC = () => {
   const params = useParams<EditChurchParams>();
+  const { postImage } = useContext(EventContext)
   const { getChurch, updateChurch } = useContext(ChurchContext);
   const { currentUserId, getChurchUser } = useContext(ChurchUserContext);
+
+  const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
   const [updatedChurch, setUpdatedChurch] = useState<Church>({
     churchId: 0,
     userId: 0,
@@ -49,6 +53,7 @@ const EditChurch: React.FC = () => {
     (async () => {
       const currentChurch = await getChurch(parseInt(params.churchId));
       setUpdatedChurch(currentChurch);
+      setDisplayedImg(currentChurch.imageUrl)
     })();
   }, []);
 
@@ -56,9 +61,9 @@ const EditChurch: React.FC = () => {
 
   const history = useHistory();
 
-  const handleInputChange = (
+  const handleInputChange = async (
     name: string,
-    value: string | number | Location
+    value: string | number | Location | File
   ) => {
     if (name.startsWith("location.")) {
       const key = name.split(".")[1];
@@ -69,6 +74,29 @@ const EditChurch: React.FC = () => {
           [key]: typeof value === "string" ? (value as string).trim() : value,
         },
       }));
+    } else if (name === "imageFile" && value instanceof File) {
+      const currentTime = new Date().getTime();
+
+      const imageName = `image_${currentTime}-${value.name}`;
+
+      const newFile = new File([value], imageName, {
+        type: value.type,
+      });
+
+      const formData = new FormData();
+      formData.append("image", newFile);
+
+      const imgName = await postImage(formData)
+
+      const imgUrl = `https://churchhive.net${imgName.imageUrl}`
+
+      setUpdatedChurch((prevChurch) => ({
+        ...prevChurch,
+        imageUrl: imgUrl,
+      }));
+
+      setDisplayedImg(imgUrl)
+
     } else {
       setUpdatedChurch((prevChurch) => ({
         ...prevChurch,
@@ -103,12 +131,33 @@ const EditChurch: React.FC = () => {
             <IonCol size="12">
               <div className={styles.header}>
                 <IonImg
-                  src="/svg/church_hive_icon.svg"
+                  src={displayedImg}
                   className={styles.logo}
                 />
               </div>
             </IonCol>
             <IonCol size="12">
+                <IonButton
+                  className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
+                  expand="full"
+                  fill="solid"
+                  color="primary"
+                >
+                  Upload Church Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const selectedFile = e.target.files && e.target.files[0];
+                      if (selectedFile) {
+                        handleInputChange("imageFile", selectedFile);
+                      }
+                    }}
+                    style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                  />
+                </IonButton>
+              </IonCol>
+            <IonCol size="7">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("churchName") ? "" : "ion-untouched"
@@ -130,7 +179,7 @@ const EditChurch: React.FC = () => {
                 onBlur={() => handleInputBlur("churchName")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="5">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("denomination") ? "" : "ion-untouched"
@@ -174,7 +223,7 @@ const EditChurch: React.FC = () => {
                 onBlur={() => handleInputBlur("location.street")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="7">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("location.city") ? "" : "ion-untouched"
@@ -196,7 +245,7 @@ const EditChurch: React.FC = () => {
                 onBlur={() => handleInputBlur("location.city")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="3">
               <IonSelect
                 className={`ion-select-field ${
                   isFieldTouched("location.state") ? "" : "ion-untouched"
@@ -285,14 +334,14 @@ const EditChurch: React.FC = () => {
                 <IonSelectOption value="Wyoming">Wyoming</IonSelectOption>
               </IonSelect>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="2">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("location.zip") ? "" : "ion-untouched"
                 }`}
                 required
                 type="text"
-                label="Zip Code"
+                label="Zip"
                 labelPlacement="floating"
                 value={updatedChurch.location.zip}
                 onIonInput={(e) => {
@@ -307,7 +356,7 @@ const EditChurch: React.FC = () => {
                 onBlur={() => handleInputBlur("location.zip")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="5">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("phoneNumber") ? "" : "ion-untouched"
@@ -329,7 +378,7 @@ const EditChurch: React.FC = () => {
                 onBlur={() => handleInputBlur("phoneNumber")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="7">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("churchEmail") ? "" : "ion-untouched"
@@ -390,7 +439,7 @@ const EditChurch: React.FC = () => {
                 onBlur={() => handleInputBlur("serviceTime")}
               />
             </IonCol>
-            <IonCol size="12">
+            {/* <IonCol size="12">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("imageUrl") ? "" : "ion-untouched"
@@ -405,7 +454,7 @@ const EditChurch: React.FC = () => {
                 }
                 onBlur={() => handleInputBlur("imageUrl")}
               />
-            </IonCol>
+            </IonCol> */}
             <IonCol size="12">
               <IonInput
                 className={`ion-input-field ${
