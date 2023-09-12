@@ -17,8 +17,10 @@ import PageHeader from "../components/Global/PageHeader";
 import { ChurchContext, NewChurch } from "../context/churchContext";
 import { ChurchUserContext } from "../context/churchUserContext";
 import styles from "../theme/forms.module.css";
+import { EventContext } from "../context/eventContext";
 
 const AddChurch: React.FC = () => {
+  const { postImage } = useContext(EventContext);
   const { createChurch } = useContext(ChurchContext);
   const { currentUserId, getChurchUser } = useContext(ChurchUserContext);
   const [newChurch, setNewChurch] = useState<NewChurch>({
@@ -40,12 +42,13 @@ const AddChurch: React.FC = () => {
   });
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
   const [message, setMessage] = useState<String>()
+  const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
 
   const history = useHistory();
 
-  const handleInputChange = (
+  const handleInputChange = async (
     name: string,
-    value: string | number | Location
+    value: string | number | Location | File
   ) => {
     if (name.startsWith("location.")) {
       const key = name.split(".")[1];
@@ -56,6 +59,29 @@ const AddChurch: React.FC = () => {
           [key]: typeof value === "string" ? (value as string).trim() : value,
         },
       }));
+    } else if (name === "imageFile" && value instanceof File) {
+      const currentTime = new Date().getTime();
+
+      const imageName = `image_${currentTime}-${value.name}`;
+
+      const newFile = new File([value], imageName, {
+        type: value.type,
+      });
+
+      const formData = new FormData();
+      formData.append("image", newFile);
+
+      const imgName = await postImage(formData)
+
+      const imgUrl = `https://churchhive.net${imgName.imageUrl}`
+
+      setNewChurch((prevEvent) => ({
+        ...prevEvent,
+        imageUrl: imgUrl,
+      }));
+
+      setDisplayedImg(imgUrl)
+
     } else {
       setNewChurch((prevChurch) => ({
         ...prevChurch,
@@ -96,7 +122,7 @@ const AddChurch: React.FC = () => {
               <IonCol size="12">
                 <div className={styles.header}>
                   <IonImg
-                    src="/svg/church_hive_icon.svg"
+                    src={displayedImg}
                     className={styles.logo}
                   />
                 </div>
@@ -109,6 +135,27 @@ const AddChurch: React.FC = () => {
             </center>
             <IonRow>
               <IonCol size="12">
+                <IonButton
+                  className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
+                  expand="full"
+                  fill="solid"
+                  color="primary"
+                >
+                  Upload Church Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const selectedFile = e.target.files && e.target.files[0];
+                      if (selectedFile) {
+                        handleInputChange("imageFile", selectedFile);
+                      }
+                    }}
+                    style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                  />
+                </IonButton>
+              </IonCol>
+              <IonCol size="7">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("churchName") ? "" : "ion-untouched"
                     }`}
@@ -129,7 +176,7 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("churchName")}
                 />
               </IonCol>
-              <IonCol size="12">
+              <IonCol size="5">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("denomination") ? "" : "ion-untouched"
                     }`}
@@ -171,7 +218,7 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("location.street")}
                 />
               </IonCol>
-              <IonCol size="12">
+              <IonCol size="7">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("location.city") ? "" : "ion-untouched"
                     }`}
@@ -192,7 +239,7 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("location.city")}
                 />
               </IonCol>
-              <IonCol size="12">
+              <IonCol size="3">
                 <IonSelect
                   className={`ion-select-field ${isFieldTouched("location.state") ? "" : "ion-untouched"
                     }`}
@@ -280,13 +327,13 @@ const AddChurch: React.FC = () => {
                   <IonSelectOption value="Wyoming">Wyoming</IonSelectOption>
                 </IonSelect>
               </IonCol>
-              <IonCol size="12">
+              <IonCol size="2">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("location.zip") ? "" : "ion-untouched"
                     }`}
                   required
                   type="text"
-                  label="Zip Code"
+                  label="Zip"
                   labelPlacement="floating"
                   value={newChurch.location.zip}
                   onIonInput={(e) => {
@@ -301,7 +348,7 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("location.zip")}
                 />
               </IonCol>
-              <IonCol size="12">
+              <IonCol size="5">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("phoneNumber") ? "" : "ion-untouched"
                     }`}
@@ -322,7 +369,7 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("phoneNumber")}
                 />
               </IonCol>
-              <IonCol size="12">
+              <IonCol size="7">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("churchEmail") ? "" : "ion-untouched"
                     }`}
@@ -365,7 +412,7 @@ const AddChurch: React.FC = () => {
                     }`}
                   required
                   type="text"
-                  label="Service Time"
+                  label="Service Times"
                   labelPlacement="floating"
                   value={newChurch.serviceTime}
                   onIonInput={(e) => {
@@ -380,7 +427,7 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("serviceTime")}
                 />
               </IonCol>
-              <IonCol size="12">
+              {/* <IonCol size="12">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("imageUrl") ? "" : "ion-untouched"
                     }`}
@@ -394,7 +441,7 @@ const AddChurch: React.FC = () => {
                   }
                   onBlur={() => handleInputBlur("imageUrl")}
                 />
-              </IonCol>
+              </IonCol> */}
               <IonCol size="12">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("website") ? "" : "ion-untouched"

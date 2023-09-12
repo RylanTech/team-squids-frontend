@@ -27,12 +27,13 @@ interface EditEventParams {
 
 const EditEvent: React.FC = () => {
   const params = useParams<EditEventParams>();
-  const { getEvent, updateEvent } = useContext(EventContext);
+  const { getEvent, updateEvent, postImage } = useContext(EventContext);
   const { currentUserId } = useContext(ChurchUserContext);
   const { churchUser, loadingStatus, error } =
     useFetchChurchUser(currentUserId);
   const today: Date = new Date();
 
+  const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
   const [currentEvent, setCurrentEvent] = useState<Event>({
     eventId: 0,
     churchId: 0,
@@ -53,6 +54,7 @@ const EditEvent: React.FC = () => {
     (async () => {
       const currentEvent = await getEvent(parseInt(params.eventId));
       setCurrentEvent(currentEvent);
+      setDisplayedImg(currentEvent.imageUrl)
       const localDate = new Date(currentEvent.date).toLocaleString("en-US", {
         dateStyle: "full",
         timeStyle: "short",
@@ -67,9 +69,9 @@ const EditEvent: React.FC = () => {
 
   const history = useHistory();
 
-  const handleInputChange = (
+  const handleInputChange = async (
     name: string,
-    value: string | string[] | number | Location
+    value: string | string[] | number | Location | File
   ) => {
     if (name === "date") {
       const isoDate = value as string;
@@ -91,6 +93,29 @@ const EditEvent: React.FC = () => {
           [key]: typeof value === "string" ? (value as string).trim() : value,
         },
       }));
+    } else if (name === "imageFile" && value instanceof File) {
+      const currentTime = new Date().getTime();
+
+      const imageName = `image_${currentTime}-${value.name}`;
+
+      const newFile = new File([value], imageName, {
+        type: value.type,
+      });
+
+      const formData = new FormData();
+      formData.append("image", newFile);
+
+      const imgName = await postImage(formData)
+
+      const imgUrl = `https://churchhive.net${imgName.imageUrl}`
+
+      setCurrentEvent((prevEvent) => ({
+        ...prevEvent,
+        imageUrl: imgUrl,
+      }));
+
+      setDisplayedImg(imgUrl)
+
     } else {
       setCurrentEvent((prevEvent) => ({
         ...prevEvent,
@@ -143,10 +168,31 @@ const EditEvent: React.FC = () => {
             <IonCol size="12">
               <div className={styles.header}>
                 <IonImg
-                  src="/svg/church_hive_icon.svg"
+                  src={displayedImg}
                   className={styles.logo}
                 />
               </div>
+            </IonCol>
+            <IonCol size="12">
+              <IonButton
+                className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
+                expand="full"
+                fill="solid"
+                color="primary"
+              >
+                Upload Event Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const selectedFile = e.target.files && e.target.files[0];
+                    if (selectedFile) {
+                      handleInputChange("imageFile", selectedFile);
+                    }
+                  }}
+                  style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                />
+              </IonButton>
             </IonCol>
             <IonCol size="12">
               <IonSelect
@@ -173,7 +219,7 @@ const EditEvent: React.FC = () => {
                   ))}
               </IonSelect>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="7">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("eventTitle") ? "" : "ion-untouched"
@@ -195,7 +241,7 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("eventTitle")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="5">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("date") ? "" : "ion-untouched"
@@ -246,7 +292,7 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("location.street")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="7">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("location.city") ? "" : "ion-untouched"
@@ -268,7 +314,7 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("location.city")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="3">
               <IonSelect
                 className={`ion-select-field ${
                   isFieldTouched("location.state") ? "" : "ion-untouched"
@@ -357,7 +403,7 @@ const EditEvent: React.FC = () => {
                 <IonSelectOption value="Wyoming">Wyoming</IonSelectOption>
               </IonSelect>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="2">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("location.zip") ? "" : "ion-untouched"
@@ -426,7 +472,7 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("description")}
               />
             </IonCol>
-            <IonCol size="12">
+            {/* <IonCol size="12">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("imageUrl") ? "" : "ion-untouched"
@@ -441,7 +487,7 @@ const EditEvent: React.FC = () => {
                 }
                 onBlur={() => handleInputBlur("imageUrl")}
               />
-            </IonCol>
+            </IonCol> */}
             <IonCol size="12">
               <IonButton
                 expand="full"
@@ -459,3 +505,7 @@ const EditEvent: React.FC = () => {
 };
 
 export default EditEvent;
+function postImage(formData: FormData) {
+  throw new Error("Function not implemented.");
+}
+

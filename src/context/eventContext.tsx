@@ -72,6 +72,7 @@ interface EventContextProps {
   userEvents: AllEvents[];
   setEvents: Dispatch<SetStateAction<AllEvents[]>>;
   getAllEvents: () => Promise<void>;
+  postImage: (formData: any) => Promise<any>;
   getAllUserEvents: () => Promise<void>;
   createEvent: (newEvent: NewEvent) => Promise<NewEvent>;
   getEvent: (eventId: number) => Promise<OneEvent>;
@@ -89,6 +90,7 @@ export const EventContext = createContext<EventContextProps>({
   userEvents: [],
   setEvents: () => {},
   getAllEvents: () => Promise.resolve(),
+  postImage: (formData: any) => Promise.resolve(),
   getAllUserEvents: () => Promise.resolve(),
   createEvent: (newEvent: NewEvent) => Promise.resolve(newEvent),
   getEvent: (eventId: number) => Promise.resolve({} as OneEvent),
@@ -134,6 +136,17 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
       await getAllUserEvents();
     })();
   }, [currentUserId]);
+
+  const postImage = async (formData: any) => {
+    try {
+      const response = await axios.post(`${BASE_URL}upload-image/`, formData, {
+        headers: authHeader()
+      });
+      return response.data
+    } catch (error: any) {
+      throw error.response.statusText;
+    }
+  };
 
   const createEvent = async (newEvent: NewEvent) => {
     try {
@@ -207,6 +220,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
       value={{
         events,
         userEvents,
+        postImage,
         setEvents,
         getAllEvents,
         getAllUserEvents,
