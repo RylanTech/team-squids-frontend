@@ -158,7 +158,7 @@ const AddEvent: React.FC = () => {
 
   useEffect(() => {
     if (churchUser) {
-      const selectedChurch = churchUser.Churches.find(church => church.churchId === newEvent.churchId);
+      const selectedChurch: any = churchUser.Churches.find(church => church.churchId === newEvent.churchId);
       if (selectedChurch?.location) {
         try {
           selectedChurch.location = JSON.parse(selectedChurch.location); // Parse the JSON string

@@ -99,6 +99,7 @@ export const ChurchContext = createContext<ChurchContextProps>({
 
 const BASE_URL = "https://churchhive.net/api/church/";
 
+
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {
   const [churches, setChurches] = useState<AllChurches[]>([]);
   const [favoriteChurches, setFavoriteChurches] = useState<AllChurches[]>([]);
