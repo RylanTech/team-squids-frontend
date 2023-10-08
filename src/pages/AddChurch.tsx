@@ -11,6 +11,7 @@ import {
   IonSelect,
   IonSelectOption,
   IonImg,
+  IonItem,
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import PageHeader from "../components/Global/PageHeader";
@@ -18,6 +19,7 @@ import { ChurchContext, NewChurch } from "../context/churchContext";
 import { ChurchUserContext } from "../context/churchUserContext";
 import styles from "../theme/forms.module.css";
 import { EventContext } from "../context/eventContext";
+import { InformationCircleOutline } from "react-ionicons";
 
 const AddChurch: React.FC = () => {
   const { postImage } = useContext(EventContext);
@@ -102,7 +104,7 @@ const AddChurch: React.FC = () => {
     await getChurchUser(currentUserId);
     if (resp) {
       history.push(`/churches`);
-      setMessage("")
+      setMessage(undefined)
     } else {
       setMessage("All feilds must be entered. The church cannot have the same name of another church. If you still have issues, try logging out and logging back in.")
     }
@@ -128,11 +130,6 @@ const AddChurch: React.FC = () => {
                 </div>
               </IonCol>
             </IonRow>
-            <center>
-              <p className={styles.loginTitle}>
-                {message}
-              </p>
-            </center>
             <IonRow>
               <IonCol size="12">
                 <IonButton
@@ -427,21 +424,6 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("serviceTime")}
                 />
               </IonCol>
-              {/* <IonCol size="12">
-                <IonInput
-                  className={`ion-input-field ${isFieldTouched("imageUrl") ? "" : "ion-untouched"
-                    }`}
-                  required
-                  type="url"
-                  label="Church Image URL"
-                  labelPlacement="floating"
-                  value={newChurch.imageUrl}
-                  onIonInput={(e) =>
-                    handleInputChange("imageUrl", e.detail.value!)
-                  }
-                  onBlur={() => handleInputBlur("imageUrl")}
-                />
-              </IonCol> */}
               <IonCol size="12">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("website") ? "" : "ion-untouched"
@@ -457,6 +439,21 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("website")}
                 />
               </IonCol>
+              {message ? (
+                <IonItem>
+                  <InformationCircleOutline
+                    style={{ marginTop: "6px", marginRight: "10px" }}
+                    color={'#c70000'}
+                    height="35px"
+                    width="35px"
+                  />
+                  <div style={{ color: "#c70000" }}>
+                    {message}
+                  </div>
+                </IonItem>
+              ) : (
+                <></>
+              )}
               <IonCol size="12">
                 <IonButton
                   expand="full"

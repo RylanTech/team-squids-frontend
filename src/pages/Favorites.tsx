@@ -35,7 +35,6 @@ const Favorites: React.FC = () => {
 
   function isFav() {
     let i = localStorage.getItem("favoriteChurches")
-    console.log(i)
     if (!i) {
       return (
         <center>
@@ -59,13 +58,6 @@ const Favorites: React.FC = () => {
         <IonToolbar color="primary">
           <IonTitle>Favorites</IonTitle>
         </IonToolbar>
-        {/* <IonToolbar color="primary">
-          <IonSearchbar 
-          onIonChange={(e) => handleSearch(e.detail.value!)}
-          onIonClear={handleClear}
-          clearIcon={trashBin} 
-          ></IonSearchbar>
-        </IonToolbar> */}
       </IonHeader>
       <IonContent fullscreen>
         <IonGrid>

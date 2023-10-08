@@ -1,3 +1,4 @@
+import { InformationCircleOutline } from 'react-ionicons'
 import React, { useContext, useEffect, useState } from "react";
 import {
   IonCol,
@@ -69,6 +70,7 @@ const AddEvent: React.FC = () => {
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [message, setMessage] = useState<string>()
+  const [dateDeleteNoti, setDateDeleteNoti] = useState(false)
 
   const history = useHistory();
 
@@ -87,6 +89,7 @@ const AddEvent: React.FC = () => {
         date: isoDate,
       }));
       setLocalDate(localDate);
+      setDateDeleteNoti(true)
     } else if (name.startsWith("location.")) {
       const key = name.split(".")[1];
       setNewEvent((prevEvent) => ({
@@ -145,7 +148,7 @@ const AddEvent: React.FC = () => {
   async function Submit(evnt: any) {
     let resp = await createEvent(evnt);
     if (resp) {
-      setMessage("")
+      setMessage(undefined)
       history.push(`/events`);
     } else {
       setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
@@ -169,8 +172,8 @@ const AddEvent: React.FC = () => {
       }
     }
   }, [newEvent.churchId]);
-  
-  
+
+
   return (
     <IonPage>
       <PageHeader header="Add Event" />
@@ -186,11 +189,6 @@ const AddEvent: React.FC = () => {
               </div>
             </IonCol>
           </IonRow>
-          <center>
-            <p className={styles.loginTitle}>
-              {message}
-            </p>
-          </center>
           <IonRow>
             <IonCol size="12">
               <IonButton
@@ -213,7 +211,7 @@ const AddEvent: React.FC = () => {
                 />
               </IonButton>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="6">
               <IonSelect
                 className={`ion-input-field ${isFieldTouched("churchId") ? "" : "ion-untouched"
                   }`}
@@ -238,7 +236,7 @@ const AddEvent: React.FC = () => {
                   ))}
               </IonSelect>
             </IonCol>
-            <IonCol size="7">
+            <IonCol size="6">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("eventTitle") ? "" : "ion-untouched"
                   }`}
@@ -260,7 +258,7 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("eventTitle")}
               />
             </IonCol>
-            <IonCol size="5">
+            <IonCol size="12">
               <IonInput
                 className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
                   }`}
@@ -288,6 +286,24 @@ const AddEvent: React.FC = () => {
                 />
               </IonModal>
             </IonCol>
+            {dateDeleteNoti ? (
+              <IonCol>
+                <IonItem>
+                  <InformationCircleOutline
+                    style={{ marginTop: "6px", marginRight: "10px" }}
+                    color={'#c70000'}
+                    height="35px"
+                    width="35px"
+                  />
+                  <div style={{ color: "#c70000" }}>
+                    The event will be deleted a day after the event date!
+                  </div>
+                </IonItem>
+                <br />
+              </IonCol>
+            ) : (
+              <></>
+            )}
             <IonCol size="12">
               <IonItem>
                 {church.churchId !== 0 ? (
@@ -502,21 +518,21 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("description")}
               />
             </IonCol>
-            {/* <IonCol size="12">
-              <IonInput
-                className={`ion-input-field ${isFieldTouched("imageUrl") ? "" : "ion-untouched"
-                  }`}
-                required
-                type="url"
-                label="Event Image URL"
-                labelPlacement="floating"
-                value={newEvent.imageUrl}
-                onIonInput={(e) =>
-                  handleInputChange("imageUrl", e.detail.value!)
-                }
-                onBlur={() => handleInputBlur("imageUrl")}
-              />
-            </IonCol> */}
+            {message ? (
+              <IonItem>
+                <InformationCircleOutline
+                  style={{ marginTop: "6px", marginRight: "10px" }}
+                  color={'#c70000'}
+                  height="35px"
+                  width="35px"
+                />
+                <div style={{ color: "#c70000" }}>
+                  {message}
+                </div>
+              </IonItem>
+            ) : (
+              <></>
+            )}
             <IonCol size="12">
               <IonButton
                 expand="full"
