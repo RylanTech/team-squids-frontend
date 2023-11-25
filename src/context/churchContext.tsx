@@ -98,6 +98,7 @@ export const ChurchContext = createContext<ChurchContextProps>({
 });
 
 const BASE_URL = "https://churchhive.net/api/church/";
+// const BASE_URL = "http://localhost:3001/api/church/";
 
 
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {

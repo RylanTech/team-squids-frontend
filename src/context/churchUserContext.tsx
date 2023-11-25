@@ -79,6 +79,7 @@ export const ChurchUserContext = createContext<ChurchUserContextProps>({
 
 
 const BASE_URL = "https://churchhive.net/api/user/";
+// const BASE_URL = "http://localhost:3001/api/user/";
 
 export const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("myChurchUserToken")}`,

@@ -1,8 +1,8 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'Final Project',
+  appId: 'com.church.hive',
+  appName: 'Church Hive',
   webDir: 'dist',
   server: {
     androidScheme: 'https'

@@ -100,6 +100,7 @@ export const EventContext = createContext<EventContextProps>({
 });
 
 const BASE_URL = "https://churchhive.net/api/event/";
+// const BASE_URL = "http://localhost:3001/api/event/";
 
 export const EventProvider = ({ children }: EventContextProviderProps) => {
   const [events, setEvents] = useState<AllEvents[]>([]);
