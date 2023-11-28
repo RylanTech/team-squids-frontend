@@ -1,0 +1,14 @@
+
+#selector {
+    /* Your styles for the selector on the left */
+    width: 200px;
+    background-color: #f0f0f0;
+}
+
+#subject-container {
+    /* Take up remaining space */
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    padding: 2px;
+    height: calc(100vh - 179px);
+}

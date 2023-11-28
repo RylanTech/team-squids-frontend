@@ -4,6 +4,7 @@ import App from "./App";
 import { ChurchProvider } from "./context/churchContext";
 import { ChurchUserProvider } from "./context/churchUserContext";
 import { EventProvider } from "./context/eventContext";
+import './theme/index.css'
 
 const container = document.getElementById("root");
 const root = createRoot(container!);

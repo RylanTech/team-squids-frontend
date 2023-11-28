@@ -40,7 +40,7 @@ export interface ChurchWithEvents {
   serviceTime: string;
   imageUrl: string;
   website: string;
-  Events?: Event[];
+  Events?: AllEvents[];
   createdAt?: Date;
   updatedAt?: Date;
 }
