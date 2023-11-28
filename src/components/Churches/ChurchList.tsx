@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import { FC } from "react";
 import { IonList } from "@ionic/react";
 import { AllChurches } from "../../context/churchContext";
 import ChurchItem from "./ChurchItem";
