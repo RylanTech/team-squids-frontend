@@ -1,8 +1,6 @@
 import React from "react";
-import { IonList } from "@ionic/react";
 import EventItem from "./EventItem";
 import { AllEvents } from "../../context/eventContext";
-import LoadingSpinner from "../Global/LoadingSpinner";
 
 interface EventListProps {
   events: AllEvents[];
