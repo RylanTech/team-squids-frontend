@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import EventItem from "./EventItem";
 import { AllEvents } from "../../context/eventContext";
-import { IonCol, IonImg, IonList } from "@ionic/react";
+import { IonCol, IonImg, IonList, IonRow } from "@ionic/react";
 import SecondEventItem from "./SecondEventItem";
 import EventInfo from "./EventInfo";
 import styles from "../../theme/forms.module.css";
@@ -19,6 +19,7 @@ const SecondEventsList: React.FC<EventListProps> = ({ events }) => {
 
   return (
     <>
+      <IonRow>
       <IonCol size="12" sizeMd="6">
         <IonList>
           {events.map((event) => (
@@ -46,6 +47,7 @@ const SecondEventsList: React.FC<EventListProps> = ({ events }) => {
           </>
         )}
       </IonCol>
+      </IonRow>
     </>
   );
 };

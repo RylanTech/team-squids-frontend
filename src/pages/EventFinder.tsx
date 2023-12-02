@@ -52,10 +52,9 @@ const EventFinder: React.FC = () => {
       if (width > 768) {
         return (
           <>
-            <IonRow>
+            <IonCol size="12">
               <SecondEventsList events={events}/>
-            </IonRow>
-            
+            </IonCol>
           </>
         )
       } else {
