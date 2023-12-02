@@ -12,6 +12,7 @@ interface ContainerProps {
 
 const SecondEventItem: React.FC<ContainerProps> = ({
   event: {
+    eventId,
     eventTitle,
     location: { street, city, state, zip },
     date,
@@ -46,6 +47,7 @@ const SecondEventItem: React.FC<ContainerProps> = ({
 
   function handleSetEvent() {
     const event: any = {
+      eventId,
       eventTitle,
       location: { street, city, state, zip },
       date,
@@ -69,7 +71,7 @@ const SecondEventItem: React.FC<ContainerProps> = ({
         </IonThumbnail>
       )
     }
-  }
+  };
 
   return (
     <IonItem

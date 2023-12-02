@@ -12,10 +12,7 @@ import {
   IonPage,
   IonRow,
 } from "@ionic/react";
-import { ChurchContext } from "../context/churchContext";
-import { ChurchUserContext } from "../context/churchUserContext";
 import PageHeader from "../components/Global/PageHeader";
-import { AllEvents, EventContext } from "../context/eventContext";
 import EventsList from "../components/Events/EventsLists";
 
 interface ChurchRouteParams {

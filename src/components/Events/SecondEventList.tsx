@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import EventItem from "./EventItem";
 import { AllEvents } from "../../context/eventContext";
 import { IonCol, IonImg, IonList, IonRow } from "@ionic/react";
 import SecondEventItem from "./SecondEventItem";
@@ -23,7 +22,6 @@ const SecondEventsList: React.FC<EventListProps> = ({ events }) => {
       <IonCol size="12" sizeMd="6">
         <IonList>
           {events.map((event) => (
-
             <SecondEventItem setEvent={(event: any) => setEvnt(event)} event={event} key={event.eventId} />
 
           ))}

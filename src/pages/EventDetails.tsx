@@ -47,7 +47,7 @@ const EventDetails: React.FC = () => {
         <IonGrid>
           <IonRow>{event && <EventInfo data={event} />}</IonRow>
           <IonRow>
-            {event && event.Church.churchEmail && (
+            {/* {event && event.Church.churchEmail && (
               <IonCol size="12">
                 <IonButton
                   expand="block"
@@ -85,7 +85,7 @@ const EventDetails: React.FC = () => {
                   Delete Event
                 </IonButton>
               </IonCol>
-            )}
+            )} */}
           </IonRow>
         </IonGrid>
       </IonContent>
