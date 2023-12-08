@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
-import { IonCol, IonImg, IonList } from "@ionic/react";
-import { AllChurches } from "../../context/churchContext";
+import { FC, useContext, useState } from "react";
+import { IonButton, IonCol, IonImg, IonList } from "@ionic/react";
+import { AllChurches, ChurchContext, OneChurch } from "../../context/churchContext";
 import SecondChurchItem from "./SecondChurchItem";
 import ChurchInfo from "./ChurchInfo";
 import styles from "../../theme/forms.module.css";
+import EventsList from "../Events/EventsLists";
 
 interface ChurchListProps {
     churches: AllChurches[];
@@ -11,9 +12,14 @@ interface ChurchListProps {
 
 const SecondChurchList: FC<ChurchListProps> = ({ churches }) => {
     const [church, setChurch] = useState()
+    const [churchWithEvents, setChruchWithEvents] = useState<OneChurch>()
 
-    function SetChurch(church: any) {
+    const { getChurch } = useContext(ChurchContext)
+
+    async function SetChurch(church: any) {
         setChurch(church)
+        let chrWithEvents = await getChurch(church.churchId)
+        setChruchWithEvents(chrWithEvents)
     }
 
     return (
@@ -43,6 +49,25 @@ const SecondChurchList: FC<ChurchListProps> = ({ churches }) => {
                             </center>
                         </IonCol>
                     </>
+                )}
+                {churchWithEvents && churchWithEvents.Events.length > 0 && (
+                    <IonCol size="12">
+                        <h4>Upcoming Events</h4>
+                        <EventsList events={churchWithEvents.Events} />
+                    </IonCol>
+                )}
+                {churchWithEvents && churchWithEvents.churchEmail && (
+                    <IonCol size="12">
+                        <IonButton
+                            expand="block"
+                            onClick={() => {
+                                const emailLink = `mailto:${churchWithEvents.churchEmail}`;
+                                window.location.href = emailLink;
+                            }}
+                        >
+                            Connect with Us
+                        </IonButton>
+                    </IonCol>
                 )}
             </IonCol>
         </>
