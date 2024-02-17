@@ -26,7 +26,7 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
   },
 }) => {
   const history = useHistory();
-  const { deleteChurch } = useContext(ChurchContext);
+  const { deleteChurch, getChurch } = useContext(ChurchContext);
   const { deleteEvent } = useContext(EventContext);
   const { currentUserId } = useContext(ChurchUserContext);
   const [churches, setChurches] = useState<Array<number>>([]);
@@ -34,6 +34,14 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
   const [church, setChurch] = useState<ChurchWithEvents>()
 
   const { apiKey } = useContext(ChurchUserContext)
+
+  useEffect(() => {
+    async function gettingChurch() {
+      let chrch = await getChurch(churchId)
+      setChurch(chrch)
+    }
+    gettingChurch()
+  },[])
 
   async function handleDeleteChurchAndEvents(
     events: AllEvents[] | undefined,
