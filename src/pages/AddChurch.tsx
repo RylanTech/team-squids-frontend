@@ -105,6 +105,24 @@ const AddChurch: React.FC = () => {
     if (resp) {
       history.push(`/churches`);
       setMessage(undefined)
+      setNewChurch({
+        userId: currentUserId,
+        churchName: "",
+        denomination: "",
+        location: {
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+        },
+        phoneNumber: "",
+        churchEmail: "",
+        welcomeMessage: "",
+        serviceTime: "",
+        imageUrl: "",
+        website: "",
+      })
+      setDisplayedImg("/svg/church_hive_icon.svg");
     } else {
       setMessage("All feilds must be entered. The church cannot have the same name of another church. If you still have issues, try logging out and logging back in.")
     }

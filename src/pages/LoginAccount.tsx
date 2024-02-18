@@ -31,8 +31,10 @@ const LoginAccount: React.FC = () => {
     loginChurchUser(loginUser).then((resp) => {
       if (resp) {
         setMessage("Login")
+        setLoginUser({email: "", password: ""})
         history.push(`/user/${resp.userId}`);
       } else {
+        setLoginUser({email: loginUser.email, password: ""})
         setMessage("Invalid Email or Password")
       }
     });

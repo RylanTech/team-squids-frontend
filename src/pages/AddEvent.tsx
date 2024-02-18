@@ -150,6 +150,39 @@ const AddEvent: React.FC = () => {
     if (resp) {
       setMessage(undefined)
       history.push(`/events`);
+      setNewEvent({
+        churchId: 0,
+        eventTitle: "",
+        date: today.toISOString(),
+        location: {
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+        },
+        eventType: "",
+        description: "",
+        imageUrl: "",
+      })
+      setChurch({
+        churchId: 0,
+        userId: 0,
+        churchName: "",
+        denomination: "",
+        location: {
+          street: "",
+          city: "",
+          state: "",
+          zip: ""
+        },
+        phoneNumber: "",
+        churchEmail: "",
+        welcomeMessage: "",
+        serviceTime: "",
+        imageUrl: "",
+        website: ""
+      })
+      setDisplayedImg("/svg/church_hive_icon.svg")
     } else {
       setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
     }
