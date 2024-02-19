@@ -12,3 +12,8 @@
     padding: 2px;
     height: calc(100vh - 179px);
 }
+
+.lmLink {
+    margin: auto;
+    margin-top: 15px;
+}

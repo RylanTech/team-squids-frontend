@@ -13,7 +13,6 @@ import {
   IonRouterLink,
   IonRow,
 } from "@ionic/react";
-import PageHeader from "../components/Global/PageHeader";
 import ChurchList from "../components/Churches/ChurchList";
 import ChurchUserInfo from "../components/ChurchUsers/ChurchUserInfo";
 import EventsList from "../components/Events/EventsLists";
@@ -85,6 +84,7 @@ const UserProfile: React.FC = () => {
                     {churchUser?.firstName}
                   </span>
                 </h1>
+                <a target="_blank" href="https://churchhive.app">ChurchHive.app</a>
               </div>
             </IonCol>
             {churchUser && <ChurchUserInfo data={churchUser} />}
