@@ -8,11 +8,13 @@ import {
   IonInput,
   IonButton,
   IonImg,
+  IonItem,
 } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 import PageHeader from "../components/Global/PageHeader";
 import { ChurchUser, ChurchUserContext } from "../context/churchUserContext";
 import styles from "../theme/forms.module.css";
+import { InformationCircleOutline } from "react-ionicons";
 
 interface EditUserParams {
   userId: string;
@@ -21,6 +23,7 @@ interface EditUserParams {
 const EditUser: React.FC = () => {
   const params = useParams<EditUserParams>();
   const { getChurchUser, updateChurchUser } = useContext(ChurchUserContext);
+  const [message, setMessage] = useState<any>(undefined)
   const [updatedUser, setUpdatedUser] = useState<ChurchUser>({
     userId: 0,
     email: "",
@@ -40,7 +43,7 @@ const EditUser: React.FC = () => {
       }));
     })();
   }, []);
-  
+
 
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
 
@@ -61,9 +64,13 @@ const EditUser: React.FC = () => {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    await updateChurchUser(updatedUser);
-    await getChurchUser(updatedUser.userId);
-    history.push(`/user/${updatedUser.userId}`);
+    if (updatedUser.password.length > 9) {
+      await updateChurchUser(updatedUser);
+      await getChurchUser(updatedUser.userId);
+      history.push(`/user/${updatedUser.userId}`);
+    } else {
+      setMessage("Password must be at least 10 characters")
+    }
   };
 
   const isFieldTouched = (name: string) => {
@@ -76,7 +83,7 @@ const EditUser: React.FC = () => {
       <IonContent fullscreen>
         <IonGrid>
           <IonRow>
-          <IonCol size="12">
+            <IonCol size="12">
               <div className={styles.header}>
                 <IonImg
                   src="/svg/church_hive_icon.svg"
@@ -84,11 +91,27 @@ const EditUser: React.FC = () => {
                 />
               </div>
             </IonCol>
+            {message ? (
+              <IonCol size="12">
+                <IonItem>
+                  <InformationCircleOutline
+                    style={{ marginTop: "6px", marginRight: "10px" }}
+                    color={'#c70000'}
+                    height="35px"
+                    width="35px"
+                  />
+                  <div style={{ color: "#c70000" }}>
+                    {message}
+                  </div>
+                </IonItem>
+              </IonCol>
+            ) : (
+              <></>
+            )}
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("firstName") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("firstName") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="First Name"
@@ -108,9 +131,8 @@ const EditUser: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("lastName") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("lastName") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Last Name"
@@ -130,9 +152,8 @@ const EditUser: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("email") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("email") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="email"
                 label="Email"
@@ -152,9 +173,8 @@ const EditUser: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("password") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("password") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="password"
                 label="Password"
