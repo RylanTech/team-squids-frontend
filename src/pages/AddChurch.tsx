@@ -149,6 +149,30 @@ const AddChurch: React.FC = () => {
               </IonCol>
             </IonRow>
             <IonRow>
+              {message ? (
+                <IonItem>
+                  <InformationCircleOutline
+                    style={{ marginTop: "6px", marginRight: "10px" }}
+                    color={'#c70000'}
+                    height="35px"
+                    width="35px"
+                  />
+                  <div style={{ color: "#c70000" }}>
+                    {message}
+                  </div>
+                </IonItem>
+              ) : (
+                <></>
+              )}
+              <IonCol size="12">
+                <IonButton
+                  expand="full"
+                  onClick={handleSubmit}
+                  className={styles.button}
+                >
+                  Submit
+                </IonButton>
+              </IonCol>
               <IonCol size="12">
                 <IonButton
                   className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
@@ -400,28 +424,6 @@ const AddChurch: React.FC = () => {
                 />
               </IonCol>
               <IonCol size="12">
-                <IonTextarea
-                  className={`ion-input-field ${isFieldTouched("welcomeMessage") ? "" : "ion-untouched"
-                    }`}
-                  required
-                  label="Welcome Message"
-                  labelPlacement="floating"
-                  rows={10}
-                  maxlength={1000}
-                  value={newChurch.welcomeMessage}
-                  onIonInput={(e) => {
-                    const inputValue = e.detail.value;
-                    if (inputValue) {
-                      if (inputValue.slice(-1) === " ") {
-                      } else {
-                        handleInputChange("welcomeMessage", inputValue);
-                      }
-                    }
-                  }}
-                  onBlur={() => handleInputBlur("welcomeMessage")}
-                />
-              </IonCol>
-              <IonCol size="12">
                 <IonInput
                   className={`ion-input-field ${isFieldTouched("serviceTime") ? "" : "ion-untouched"
                     }`}
@@ -457,29 +459,27 @@ const AddChurch: React.FC = () => {
                   onBlur={() => handleInputBlur("website")}
                 />
               </IonCol>
-              {message ? (
-                <IonItem>
-                  <InformationCircleOutline
-                    style={{ marginTop: "6px", marginRight: "10px" }}
-                    color={'#c70000'}
-                    height="35px"
-                    width="35px"
-                  />
-                  <div style={{ color: "#c70000" }}>
-                    {message}
-                  </div>
-                </IonItem>
-              ) : (
-                <></>
-              )}
               <IonCol size="12">
-                <IonButton
-                  expand="full"
-                  onClick={handleSubmit}
-                  className={styles.button}
-                >
-                  Submit
-                </IonButton>
+                <IonTextarea
+                  className={`ion-input-field ${isFieldTouched("welcomeMessage") ? "" : "ion-untouched"
+                    }`}
+                  required
+                  label="Welcome Message"
+                  labelPlacement="floating"
+                  rows={10}
+                  maxlength={1000}
+                  value={newChurch.welcomeMessage}
+                  onIonInput={(e) => {
+                    const inputValue = e.detail.value;
+                    if (inputValue) {
+                      if (inputValue.slice(-1) === " ") {
+                      } else {
+                        handleInputChange("welcomeMessage", inputValue);
+                      }
+                    }
+                  }}
+                  onBlur={() => handleInputBlur("welcomeMessage")}
+                />
               </IonCol>
             </IonRow>
           </IonGrid>

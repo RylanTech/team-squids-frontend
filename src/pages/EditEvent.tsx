@@ -175,6 +175,15 @@ const EditEvent: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonButton
+                expand="full"
+                onClick={handleSubmit}
+                className={styles.button}
+              >
+                Submit
+              </IonButton>
+            </IonCol>
+            <IonCol size="12">
+              <IonButton
                 className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
                 expand="full"
                 fill="solid"
@@ -488,15 +497,6 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("imageUrl")}
               />
             </IonCol> */}
-            <IonCol size="12">
-              <IonButton
-                expand="full"
-                onClick={handleSubmit}
-                className={styles.button}
-              >
-                Submit
-              </IonButton>
-            </IonCol>
           </IonRow>
         </IonGrid>
       </IonContent>

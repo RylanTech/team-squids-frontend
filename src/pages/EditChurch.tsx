@@ -112,10 +112,12 @@ const EditChurch: React.FC = () => {
   };
 
   const handleSubmit = async (event: any) => {
-    event.preventDefault();
-    await updateChurch(updatedChurch);
-    await getChurchUser(currentUserId);
-    history.push(`/user/${currentUserId}`);
+    event.preventDefault(); 
+    let resp = await updateChurch(updatedChurch);
+    if (resp) {
+      await getChurchUser(currentUserId);
+      history.push(`/user/${currentUserId}`);
+    }
   };
 
   const isFieldTouched = (name: string) => {
@@ -137,31 +139,39 @@ const EditChurch: React.FC = () => {
               </div>
             </IonCol>
             <IonCol size="12">
-                <IonButton
-                  className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
-                  expand="full"
-                  fill="solid"
-                  color="primary"
-                >
-                  Upload Church Image
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const selectedFile = e.target.files && e.target.files[0];
-                      if (selectedFile) {
-                        handleInputChange("imageFile", selectedFile);
-                      }
-                    }}
-                    style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
-                  />
-                </IonButton>
-              </IonCol>
+              <IonButton
+                expand="full"
+                onClick={handleSubmit}
+                className={styles.button}
+              >
+                Submit
+              </IonButton>
+            </IonCol>
+            <IonCol size="12">
+              <IonButton
+                className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
+                expand="full"
+                fill="solid"
+                color="primary"
+              >
+                Upload Church Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const selectedFile = e.target.files && e.target.files[0];
+                    if (selectedFile) {
+                      handleInputChange("imageFile", selectedFile);
+                    }
+                  }}
+                  style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                />
+              </IonButton>
+            </IonCol>
             <IonCol size="7">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("churchName") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("churchName") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Church Name"
@@ -181,9 +191,8 @@ const EditChurch: React.FC = () => {
             </IonCol>
             <IonCol size="5">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("denomination") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("denomination") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Denomination"
@@ -203,9 +212,8 @@ const EditChurch: React.FC = () => {
             </IonCol>
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("location.street") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("location.street") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Street"
@@ -225,9 +233,8 @@ const EditChurch: React.FC = () => {
             </IonCol>
             <IonCol size="7">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("location.city") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("location.city") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="City"
@@ -247,9 +254,8 @@ const EditChurch: React.FC = () => {
             </IonCol>
             <IonCol size="3">
               <IonSelect
-                className={`ion-select-field ${
-                  isFieldTouched("location.state") ? "" : "ion-untouched"
-                }`}
+                className={`ion-select-field ${isFieldTouched("location.state") ? "" : "ion-untouched"
+                  }`}
                 placeholder="Select s State"
                 label="State"
                 labelPlacement="floating"
@@ -336,9 +342,8 @@ const EditChurch: React.FC = () => {
             </IonCol>
             <IonCol size="2">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("location.zip") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("location.zip") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Zip"
@@ -358,9 +363,8 @@ const EditChurch: React.FC = () => {
             </IonCol>
             <IonCol size="5">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("phoneNumber") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("phoneNumber") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="tel"
                 label="Phone Number"
@@ -380,9 +384,8 @@ const EditChurch: React.FC = () => {
             </IonCol>
             <IonCol size="7">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("churchEmail") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("churchEmail") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="email"
                 label="Church Email"
@@ -395,33 +398,9 @@ const EditChurch: React.FC = () => {
               />
             </IonCol>
             <IonCol size="12">
-              <IonTextarea
-                className={`ion-input-field ${
-                  isFieldTouched("welcomeMessage") ? "" : "ion-untouched"
-                }`}
-                required
-                label="Welcome Message"
-                labelPlacement="floating"
-                rows={10}
-                maxlength={1000}
-                value={updatedChurch.welcomeMessage}
-                onIonInput={(e) => {
-                  const inputValue = e.detail.value;
-                  if (inputValue) {
-                    if (inputValue.slice(-1) === " ") {
-                    } else {
-                      handleInputChange("welcomeMessage", inputValue);
-                    }
-                  }
-                }}
-                onBlur={() => handleInputBlur("welcomeMessage")}
-              />
-            </IonCol>
-            <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("serviceTime") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("serviceTime") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="text"
                 label="Service Time"
@@ -457,9 +436,8 @@ const EditChurch: React.FC = () => {
             </IonCol> */}
             <IonCol size="12">
               <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("website") ? "" : "ion-untouched"
-                }`}
+                className={`ion-input-field ${isFieldTouched("website") ? "" : "ion-untouched"
+                  }`}
                 required
                 type="url"
                 label="Church Website"
@@ -472,13 +450,26 @@ const EditChurch: React.FC = () => {
               />
             </IonCol>
             <IonCol size="12">
-              <IonButton
-                expand="full"
-                onClick={handleSubmit}
-                className={styles.button}
-              >
-                Submit
-              </IonButton>
+              <IonTextarea
+                className={`ion-input-field ${isFieldTouched("welcomeMessage") ? "" : "ion-untouched"
+                  }`}
+                required
+                label="Welcome Message"
+                labelPlacement="floating"
+                rows={10}
+                maxlength={1000}
+                value={updatedChurch.welcomeMessage}
+                onIonInput={(e) => {
+                  const inputValue = e.detail.value;
+                  if (inputValue) {
+                    if (inputValue.slice(-1) === " ") {
+                    } else {
+                      handleInputChange("welcomeMessage", inputValue);
+                    }
+                  }
+                }}
+                onBlur={() => handleInputBlur("welcomeMessage")}
+              />
             </IonCol>
           </IonRow>
         </IonGrid>

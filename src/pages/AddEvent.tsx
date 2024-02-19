@@ -224,25 +224,51 @@ const AddEvent: React.FC = () => {
           </IonRow>
           <IonRow>
             <IonCol size="12">
-              <IonButton
-                className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
-                expand="full"
-                fill="solid"
-                color="primary"
-              >
-                Upload Event Image
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const selectedFile = e.target.files && e.target.files[0];
-                    if (selectedFile) {
-                      handleInputChange("imageFile", selectedFile);
-                    }
-                  }}
-                  style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
-                />
-              </IonButton>
+              {message ? (
+                <IonItem>
+                  <InformationCircleOutline
+                    style={{ marginTop: "6px", marginRight: "10px" }}
+                    color={'#c70000'}
+                    height="35px"
+                    width="35px"
+                  />
+                  <div style={{ color: "#c70000" }}>
+                    {message}
+                  </div>
+                </IonItem>
+              ) : (
+                <></>
+              )}
+              <IonCol size="12">
+                <IonButton
+                  expand="full"
+                  onClick={handleSubmit}
+                  className={styles.button}
+                >
+                  Submit
+                </IonButton>
+              </IonCol>
+              <IonCol size='12s'>
+                <IonButton
+                  className={`ion-input-field ${isFieldTouched("imageFile") ? "" : "ion-untouched"}`}
+                  expand="full"
+                  fill="solid"
+                  color="primary"
+                >
+                  Upload Event Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const selectedFile = e.target.files && e.target.files[0];
+                      if (selectedFile) {
+                        handleInputChange("imageFile", selectedFile);
+                      }
+                    }}
+                    style={{ opacity: 0, position: "absolute", top: 0, left: 0, width: "100%", height: "100%", cursor: "pointer" }}
+                  />
+                </IonButton>
+              </IonCol>
             </IonCol>
             <IonCol size="6">
               <IonSelect
@@ -550,30 +576,6 @@ const AddEvent: React.FC = () => {
                 }}
                 onBlur={() => handleInputBlur("description")}
               />
-            </IonCol>
-            {message ? (
-              <IonItem>
-                <InformationCircleOutline
-                  style={{ marginTop: "6px", marginRight: "10px" }}
-                  color={'#c70000'}
-                  height="35px"
-                  width="35px"
-                />
-                <div style={{ color: "#c70000" }}>
-                  {message}
-                </div>
-              </IonItem>
-            ) : (
-              <></>
-            )}
-            <IonCol size="12">
-              <IonButton
-                expand="full"
-                onClick={handleSubmit}
-                className={styles.button}
-              >
-                Submit
-              </IonButton>
             </IonCol>
           </IonRow>
         </IonGrid>
