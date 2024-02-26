@@ -38,7 +38,9 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
   useEffect(() => {
     async function gettingChurch() {
       let chrch = await getChurch(churchId)
+      console.log(chrch)
       setChurch(chrch)
+      console.log(church)
     }
     gettingChurch()
   },[])

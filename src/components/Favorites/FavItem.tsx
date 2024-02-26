@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { IonIcon, IonItem, IonLabel, IonList, IonThumbnail } from "@ionic/react";
-import { createOutline } from "ionicons/icons";
+
 import { ChurchWithEvents } from "../../context/churchContext";
 import { ChurchUserContext } from "../../context/churchUserContext";
-import { Event } from "../../context/eventContext";
+import { AllEvents, Event } from "../../context/eventContext";
+import { createOutline } from "ionicons/icons";
 
 interface ContainerProps {
   church: ChurchWithEvents;
@@ -52,8 +53,8 @@ const FavItem: React.FC<ContainerProps> = ({
       function sortByDate(events: Event[]): Event[] {
         return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       }
-      Events = sortByDate(Events)
-      return Events.map((event) => {
+      let sortedEvents: Event[] = sortByDate(Events)
+      return sortedEvents.map((event) => {
 
         const thisIsoDate = new Date(convertUtcToLocal(event.date))
         const isoDate = new Date(thisIsoDate);

@@ -183,6 +183,7 @@ const AddEvent: React.FC = () => {
         website: ""
       })
       setDisplayedImg("/svg/church_hive_icon.svg")
+      setDateDeleteNoti(false)
     } else {
       setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
     }
