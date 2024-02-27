@@ -19,7 +19,7 @@ import {
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import PageHeader from "../components/Global/PageHeader";
-import { EventContext, NewEvent } from "../context/eventContext";
+import { EventContext, NewEvent, TriggerInfo } from "../context/eventContext";
 import { ChurchUserContext } from "../context/churchUserContext";
 import { useFetchChurchUser } from "../hooks/useFetchChurchUser";
 import styles from "../theme/forms.module.css";
@@ -32,6 +32,7 @@ const AddEvent: React.FC = () => {
   const today: Date = new Date();
 
   const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
+  const [isChecked, setIsChecked] = useState(false)
   const [newEvent, setNewEvent] = useState<NewEvent>({
     churchId: 0,
     eventTitle: "",
@@ -146,7 +147,13 @@ const AddEvent: React.FC = () => {
   };
 
   async function Submit(evnt: any) {
-    let resp = await createEvent(evnt);
+    let triggerInfo: TriggerInfo = {
+      body: "body",
+      title: "title",
+      dayBefore: true,
+      weekBefore: false
+    }
+    let resp = await createEvent(evnt, triggerInfo);
     if (resp) {
       setMessage(undefined)
       history.push(`/events`);
@@ -367,7 +374,9 @@ const AddEvent: React.FC = () => {
               <IonItem>
                 {church.churchId !== 0 ? (
                   <IonCheckbox justify="space-between"
+                  checked={isChecked}
                     onClick={() => {
+                      setIsChecked(true)
                       setNewEvent((prevEvent) => ({
                         ...prevEvent,
                         location: church.location
