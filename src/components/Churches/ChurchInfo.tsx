@@ -5,6 +5,7 @@ import styles from "../../theme/info.module.css";
 import { ChurchUserContext } from "../../context/churchUserContext";
 import { AllEvents, EventContext } from "../../context/eventContext";
 import { useHistory, useParams } from "react-router";
+import { AppUserContext, appUser } from "../../context/appUserContext";
 
 
 interface ChurchInfoProps {
@@ -26,13 +27,14 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
   },
 }) => {
   const history = useHistory();
-  const { deleteChurch, getChurch } = useContext(ChurchContext);
-  const { deleteEvent } = useContext(EventContext);
-  const { currentUserId } = useContext(ChurchUserContext);
   const [churches, setChurches] = useState<Array<number>>([]);
   const [isFavoriteChurch, setIsFavoriteChurch] = useState(false)
   const [church, setChurch] = useState<ChurchWithEvents>()
-
+  
+  const { createAppUser } = useContext(AppUserContext)
+  const { deleteChurch, getChurch } = useContext(ChurchContext);
+  const { deleteEvent } = useContext(EventContext);
+  const { currentUserId } = useContext(ChurchUserContext);
   const { apiKey } = useContext(ChurchUserContext)
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
       setChurch(chrch)
     }
     gettingChurch()
-  },[])
+  }, [])
 
   async function handleDeleteChurchAndEvents(
     events: AllEvents[] | undefined,
@@ -66,6 +68,14 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
     setChurches(updatedChurches)
     let i = JSON.stringify(updatedChurches)
     localStorage.setItem("favoriteChurches", i)
+    let token = await localStorage.getItem("phoneToken")
+    if (token) {
+      let userInfo: appUser = {
+        favArr: updatedChurches,
+        phoneId: token
+      }
+      createAppUser(userInfo)
+    }
   }
 
   async function removeFavorite() {
@@ -73,11 +83,18 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
     const updatedChurches = churches.filter(
       (chrchId) => chrchId !== churchId
     );
-    
-    console.log(updatedChurches)
     setChurches(updatedChurches)
     let i = JSON.stringify(updatedChurches)
     localStorage.setItem("favoriteChurches", i)
+
+    let token = await localStorage.getItem("phoneToken")
+    if (token) {
+      let userInfo: appUser = {
+        favArr: updatedChurches,
+        phoneId: token
+      }
+      createAppUser(userInfo)
+    }
   }
 
   const staticMap = `https://maps.googleapis.com/maps/api/staticmap?center=${street},${city},${state}
@@ -91,7 +108,7 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
     setIsFavoriteChurch(false)
     if (favChurches !== null) {
       let chrches = JSON.parse(favChurches)
-      chrches.map((id:number) => {
+      chrches.map((id: number) => {
         if (id === churchId) {
           setIsFavoriteChurch(true)
         }

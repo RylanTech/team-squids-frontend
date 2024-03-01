@@ -15,10 +15,13 @@ import { ChurchContext } from "../context/churchContext";
 import { trashBin } from "ionicons/icons";
 import { ChurchUserContext } from "../context/churchUserContext";
 import SecondChurchList from "../components/Churches/SecondChurchList";
+import { PushNotifications, Token } from "@capacitor/push-notifications";
+import { AppUserContext, appUser } from "../context/appUserContext";
 
 const ChurchFinder: React.FC = () => {
   const { searchChurches, churches, getAllChurches } = useContext(ChurchContext);
   const { getApiKey } = useContext(ChurchUserContext)
+  const { createAppUser } = useContext(AppUserContext)
 
   const [width, setWidth] = useState<number>()
 
@@ -45,8 +48,68 @@ const ChurchFinder: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    PushNotifications.checkPermissions().then((res) => {
+      if (res.receive !== 'granted') {
+        PushNotifications.requestPermissions().then((res) => {
+          if (res.receive === 'denied') {
+            console.log('Push Notification permission denied');
+          }
+          else {
+            console.log('Push Notification permission granted');
+            register();
+          }
+        });
+      } else {
+        register();
+      }
+    });
+  }, [])
+
+  const register = () => {
+    console.log('Initializing HomePage');
+
+    // Register with Apple / Google to receive push via APNS/FCM
+    PushNotifications.register();
+
+    PushNotifications.addListener('registration',
+      (token: Token) => {
+        console.log('Push registration success');
+
+        if (token) {
+          let strToken = token.value
+          localStorage.setItem('phoneToken', strToken)
+          
+          let favStr = localStorage.getItem("favoriteChurches");
+          if (favStr) {
+            let favArr = JSON.parse(favStr)
+            let userInfo: appUser = {
+              favArr: favArr,
+              phoneId: strToken
+            }
+            createAppUser(userInfo)
+          } else {
+            let userInfo: appUser = {
+              favArr: [],
+              phoneId: token.value
+            }
+            createAppUser(userInfo)
+          }
+        } else {
+          console.log("No token to submit for notifications")
+        }
+
+      }
+    );
+
+    PushNotifications.addListener('registrationError',
+      (error: any) => {
+        console.log('Error on registration: ' + JSON.stringify(error));
+      }
+    );
+  }
+
   const handleSearch = async (searchQuery: string) => {
-    // Call function to search locations base on query
     await searchChurches(searchQuery)
   };
 
@@ -59,7 +122,7 @@ const ChurchFinder: React.FC = () => {
       if (width > 768) {
         return (
           <>
-          <SecondChurchList churches={churches} />
+            <SecondChurchList churches={churches} />
           </>
         )
       } else {

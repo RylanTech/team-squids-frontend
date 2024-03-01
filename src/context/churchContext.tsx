@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { ChurchUser, ChurchUserContext, authHeader } from "./churchUserContext";
-import { AllEvents, Event } from "./eventContext";
+import { AllEvents } from "./eventContext";
 import Location from "../interfaces/Location";
 
 export interface Church {
@@ -97,8 +97,8 @@ export const ChurchContext = createContext<ChurchContextProps>({
   searchChurches: (query: string) => Promise.resolve(),
 });
 
-// const BASE_URL = "https://churchhive.net/api/church/";
-const BASE_URL = "http://localhost:3001/api/church/";
+const BASE_URL = "https://churchhive.net/api/church/";
+// const BASE_URL = "http://localhost:3001/api/church/";
 
 
 export const ChurchProvider = ({ children }: ChurchContextProviderProps) => {

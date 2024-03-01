@@ -103,11 +103,11 @@ export const EventContext = createContext<EventContextProps>({
   getEvent: (eventId: number) => Promise.resolve({} as OneEvent),
   updateEvent: (updatedEvent: Event) => Promise.resolve(updatedEvent),
   deleteEvent: (eventId: number) => Promise.resolve({} as Event),
-  searchEvents: (query: string) => Promise.resolve(),
+  searchEvents: (query: string) => Promise.resolve()
 });
 
-// const BASE_URL = "https://churchhive.net/api/event/";
-const BASE_URL = "http://localhost:3001/api/event/";
+const BASE_URL = "https://churchhive.net/api/event/";
+// const BASE_URL = "http://localhost:3001/api/event/";
 
 export const EventProvider = ({ children }: EventContextProviderProps) => {
   const [events, setEvents] = useState<AllEvents[]>([]);
