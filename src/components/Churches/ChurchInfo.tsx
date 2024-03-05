@@ -31,7 +31,7 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
   const [isFavoriteChurch, setIsFavoriteChurch] = useState(false)
   const [church, setChurch] = useState<ChurchWithEvents>()
   
-  const { createAppUser } = useContext(AppUserContext)
+  const { updateAppUser } = useContext(AppUserContext)
   const { deleteChurch, getChurch } = useContext(ChurchContext);
   const { deleteEvent } = useContext(EventContext);
   const { currentUserId } = useContext(ChurchUserContext);
@@ -74,7 +74,7 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
         favArr: updatedChurches,
         phoneId: token
       }
-      createAppUser(userInfo)
+      updateAppUser(userInfo)
     }
   }
 
@@ -93,7 +93,7 @@ const ChurchInfo: React.FC<ChurchInfoProps> = ({
         favArr: updatedChurches,
         phoneId: token
       }
-      createAppUser(userInfo)
+      updateAppUser(userInfo)
     }
   }
 

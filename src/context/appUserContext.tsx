@@ -6,12 +6,12 @@ import {
 } from "react";
 
 export interface appUser {
-    phoneId: Token,
+    phoneId: string,
     favArr: number[]
 }
 
 interface AppUserContextProps {
-    createAppUser: (userInfo: appUser) => Promise<void>;
+    // createAppUser: (userInfo: appUser) => Promise<void>;
     updateAppUser: (userInfo: appUser) => Promise<void>;
 }
 
@@ -20,7 +20,7 @@ interface AppUserContextProviderProps {
 }
 
 export const AppUserContext = createContext<AppUserContextProps>({
-    createAppUser: () => Promise.resolve(),
+    // createAppUser: () => Promise.resolve(),
     updateAppUser: () => Promise.resolve(),
 });
 
@@ -49,8 +49,8 @@ export const AppUserProvider = ({ children }: AppUserContextProviderProps) => {
     return (
         <AppUserContext.Provider
             value={{
-                updateAppUser,
-                createAppUser
+                updateAppUser
+                // createAppUser
             }}
         >
             {children}

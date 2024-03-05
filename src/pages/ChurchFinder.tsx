@@ -16,12 +16,10 @@ import { trashBin } from "ionicons/icons";
 import { ChurchUserContext } from "../context/churchUserContext";
 import SecondChurchList from "../components/Churches/SecondChurchList";
 import { PushNotifications, Token } from "@capacitor/push-notifications";
-import { AppUserContext, appUser } from "../context/appUserContext";
 
 const ChurchFinder: React.FC = () => {
   const { searchChurches, churches, getAllChurches } = useContext(ChurchContext);
   const { getApiKey } = useContext(ChurchUserContext)
-  const { createAppUser } = useContext(AppUserContext)
 
   const [width, setWidth] = useState<number>()
 
@@ -67,8 +65,6 @@ const ChurchFinder: React.FC = () => {
   }, [])
 
   const register = () => {
-    console.log('Initializing HomePage');
-
     // Register with Apple / Google to receive push via APNS/FCM
     PushNotifications.register();
 
@@ -79,22 +75,6 @@ const ChurchFinder: React.FC = () => {
         if (token) {
           let strToken = token.value
           localStorage.setItem('phoneToken', strToken)
-          
-          let favStr = localStorage.getItem("favoriteChurches");
-          if (favStr) {
-            let favArr = JSON.parse(favStr)
-            let userInfo: appUser = {
-              favArr: favArr,
-              phoneId: strToken
-            }
-            createAppUser(userInfo)
-          } else {
-            let userInfo: appUser = {
-              favArr: [],
-              phoneId: token.value
-            }
-            createAppUser(userInfo)
-          }
         } else {
           console.log("No token to submit for notifications")
         }
