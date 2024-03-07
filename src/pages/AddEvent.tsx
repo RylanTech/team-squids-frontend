@@ -32,7 +32,9 @@ const AddEvent: React.FC = () => {
   const today: Date = new Date();
 
   const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
-  const [isChecked, setIsChecked] = useState(false)
+  const [isDateChecked, setIsDateChecked] = useState(false)
+  const [isDayChecked, setIsDayChecked] = useState(false)
+  const [isWeekChecked, setIsWeekChecked] = useState(false)
   const [newEvent, setNewEvent] = useState<NewEvent>({
     churchId: 0,
     eventTitle: "",
@@ -72,6 +74,7 @@ const AddEvent: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [message, setMessage] = useState<string>()
   const [dateDeleteNoti, setDateDeleteNoti] = useState(false)
+  let isDateCheckedTimer: any;
 
   const history = useHistory();
 
@@ -146,6 +149,46 @@ const AddEvent: React.FC = () => {
     Submit(evnt)
   };
 
+  async function resettingInputs() {
+    setLocalDate("")
+    setDateDeleteNoti(false)
+    setMessage(undefined)
+    setNewEvent({
+      churchId: 0,
+      eventTitle: "",
+      date: "",
+      location: {
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+      },
+      eventType: "",
+      description: "",
+      imageUrl: "",
+    })
+    setChurch({
+      churchId: 0,
+      userId: 0,
+      churchName: "",
+      denomination: "",
+      location: {
+        street: "",
+        city: "",
+        state: "",
+        zip: ""
+      },
+      phoneNumber: "",
+      churchEmail: "",
+      welcomeMessage: "",
+      serviceTime: "",
+      imageUrl: "",
+      website: ""
+    })
+    setDisplayedImg("/svg/church_hive_icon.svg")
+    setIsDateChecked(false)
+  }
+
   async function Submit(evnt: any) {
     let triggerInfo: TriggerInfo = {
       body: "body",
@@ -155,41 +198,10 @@ const AddEvent: React.FC = () => {
     }
     let resp = await createEvent(evnt, triggerInfo);
     if (resp) {
-      setMessage(undefined)
-      history.push(`/events`);
-      setNewEvent({
-        churchId: 0,
-        eventTitle: "",
-        date: today.toISOString(),
-        location: {
-          street: "",
-          city: "",
-          state: "",
-          zip: "",
-        },
-        eventType: "",
-        description: "",
-        imageUrl: "",
+
+      await resettingInputs().then(() => {
+        history.push(`/events`);
       })
-      setChurch({
-        churchId: 0,
-        userId: 0,
-        churchName: "",
-        denomination: "",
-        location: {
-          street: "",
-          city: "",
-          state: "",
-          zip: ""
-        },
-        phoneNumber: "",
-        churchEmail: "",
-        welcomeMessage: "",
-        serviceTime: "",
-        imageUrl: "",
-        website: ""
-      })
-      setDisplayedImg("/svg/church_hive_icon.svg")
     } else {
       setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
     }
@@ -213,6 +225,101 @@ const AddEvent: React.FC = () => {
     }
   }, [newEvent.churchId]);
 
+  function handleIsDateChecked() {
+    console.log(isDateChecked);
+
+    if (!isDateChecked) {
+      setIsDateChecked(true);
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        location: {
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+        },
+      }));
+
+      // The timers are because the amound off callbacks are unpredictable from the Ioncheckbox
+      setTimeout(() => {
+        setIsDateChecked(false);
+      }, 50);
+    } else {
+      setIsDateChecked(false);
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        location: church.location
+      }));
+
+      setTimeout(() => {
+        setIsDateChecked(true);
+      }, 50);
+    }
+  }
+
+  function handleIsDayChecked() {
+    console.log(isDayChecked);
+
+    if (!isDateChecked) {
+      setIsDayChecked(false)
+
+      setTimeout(() => {
+        setIsDayChecked(false);
+      }, 50);
+    } else {
+      setIsDayChecked(false);
+
+      setTimeout(() => {
+        setIsDateChecked(true);
+      }, 50);
+    }
+  }
+
+  function handleIsWeekChecked() {
+    console.log(isWeekChecked);
+
+    if (!isWeekChecked) {
+      setIsWeekChecked(false)
+
+      setTimeout(() => {
+        setIsWeekChecked(false);
+      }, 50);
+    } else {
+      setIsWeekChecked(false);
+
+      setTimeout(() => {
+        setIsWeekChecked(true);
+      }, 50);
+    }
+  }
+
+  function returnNotiDay() {
+    return (
+      <>
+        <IonCheckbox justify="space-between"
+          checked={isDateChecked}
+          onClick={() => {
+            handleIsDateChecked()
+          }}
+        >Send a Notification the day before
+        </IonCheckbox>
+      </>
+    )
+  }
+
+  function returnNotiWeek() {
+    return (
+      <>
+        <IonCheckbox justify="space-between"
+          checked={isDateChecked}
+          onClick={() => {
+            handleIsDateChecked()
+          }}
+        >Send a Notification the week before
+        </IonCheckbox>
+      </>
+    )
+  }
 
   return (
     <IonPage>
@@ -370,17 +477,23 @@ const AddEvent: React.FC = () => {
             ) : (
               <></>
             )}
+            <IonCol size='12'>
+              <IonItem>
+                {returnNotiDay()}
+              </IonItem>
+            </IonCol>
+            <IonCol size='12'>
+              <IonItem>
+                {returnNotiWeek()}
+              </IonItem>
+            </IonCol>
             <IonCol size="12">
               <IonItem>
                 {church.churchId !== 0 ? (
                   <IonCheckbox justify="space-between"
-                  checked={isChecked}
+                    checked={isDateChecked}
                     onClick={() => {
-                      setIsChecked(true)
-                      setNewEvent((prevEvent) => ({
-                        ...prevEvent,
-                        location: church.location
-                      }));
+                      handleIsDateChecked()
                     }}
                   >Address is the same as church</IonCheckbox>
                 ) : (

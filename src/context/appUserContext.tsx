@@ -1,4 +1,3 @@
-import { Token } from "@capacitor/push-notifications";
 import axios from "axios";
 import {
     ReactNode,
