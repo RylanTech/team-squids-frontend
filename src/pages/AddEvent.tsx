@@ -74,7 +74,6 @@ const AddEvent: React.FC = () => {
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
   const [message, setMessage] = useState<string>()
   const [dateDeleteNoti, setDateDeleteNoti] = useState(false)
-  let isDateCheckedTimer: any;
 
   const history = useHistory();
 
@@ -187,14 +186,16 @@ const AddEvent: React.FC = () => {
     })
     setDisplayedImg("/svg/church_hive_icon.svg")
     setIsDateChecked(false)
+    setIsDayChecked(false)
+    setIsWeekChecked(false)
   }
 
   async function Submit(evnt: any) {
     let triggerInfo: TriggerInfo = {
-      body: "body",
-      title: "title",
-      dayBefore: true,
-      weekBefore: false
+      body: "Come join us for an upcoming event!",
+      title: church.churchName,
+      dayBefore: isDayChecked,
+      weekBefore: isWeekChecked
     }
     let resp = await createEvent(evnt, triggerInfo);
     if (resp) {
@@ -225,8 +226,34 @@ const AddEvent: React.FC = () => {
     }
   }, [newEvent.churchId]);
 
+  function isSameDay(date1ISO: string, date2: Date) {
+    const date1 = new Date(date1ISO);
+
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
+  function is8DaysBefore(dateString: string): boolean {
+    // Convert the string input to a Date object
+    const dateInput = new Date(dateString);
+
+    // Get the current date and time
+    const currentDate = new Date();
+
+    // Calculate the difference in milliseconds
+    const timeDifference = dateInput.getTime() - currentDate.getTime();
+
+    // Calculate the difference in days
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+    // Check if the difference is within 8 days or less
+    return daysDifference >= 0 && daysDifference <= 8;
+  }
+
   function handleIsDateChecked() {
-    console.log(isDateChecked);
 
     if (!isDateChecked) {
       setIsDateChecked(true);
@@ -258,67 +285,99 @@ const AddEvent: React.FC = () => {
   }
 
   function handleIsDayChecked() {
-    console.log(isDayChecked);
 
-    if (!isDateChecked) {
+    if (!isDayChecked) {
       setIsDayChecked(false)
 
       setTimeout(() => {
-        setIsDayChecked(false);
+        setIsDayChecked(true);
       }, 50);
     } else {
-      setIsDayChecked(false);
+      setIsDayChecked(true);
 
       setTimeout(() => {
-        setIsDateChecked(true);
+        setIsDayChecked(false);
       }, 50);
     }
   }
 
   function handleIsWeekChecked() {
-    console.log(isWeekChecked);
 
     if (!isWeekChecked) {
       setIsWeekChecked(false)
 
       setTimeout(() => {
-        setIsWeekChecked(false);
+        setIsWeekChecked(true);
       }, 50);
     } else {
-      setIsWeekChecked(false);
+      setIsWeekChecked(true);
 
       setTimeout(() => {
-        setIsWeekChecked(true);
+        setIsWeekChecked(false);
       }, 50);
     }
   }
 
   function returnNotiDay() {
-    return (
-      <>
-        <IonCheckbox justify="space-between"
-          checked={isDateChecked}
-          onClick={() => {
-            handleIsDateChecked()
-          }}
-        >Send a Notification the day before
-        </IonCheckbox>
-      </>
-    )
+    if (!isSameDay(newEvent.date, new Date)) {
+      return (
+        <>
+          <IonCheckbox justify="space-between"
+            checked={isDayChecked}
+            onClick={() => {
+              handleIsDayChecked()
+            }}
+          >Send a notification the day before
+          </IonCheckbox>
+        </>
+
+      )
+    } else {
+      return (
+        <>
+          <IonCheckbox justify="space-between"
+            disabled
+          >Send a notification the day before
+          </IonCheckbox>
+        </>
+      )
+    }
   }
 
   function returnNotiWeek() {
-    return (
-      <>
-        <IonCheckbox justify="space-between"
-          checked={isDateChecked}
-          onClick={() => {
-            handleIsDateChecked()
-          }}
-        >Send a Notification the week before
-        </IonCheckbox>
-      </>
-    )
+    if (!isSameDay(newEvent.date, new Date)) {
+      if (is8DaysBefore(newEvent.date)) {
+        return (
+          <>
+            <IonCheckbox justify="space-between"
+              disabled
+            >Send a notification the week before
+            </IonCheckbox>
+          </>
+        )
+      } else {
+        return (
+          <>
+            <IonCheckbox justify="space-between"
+              checked={isWeekChecked}
+              onClick={() => {
+                handleIsWeekChecked()
+              }}
+            >Send a notification the week before
+            </IonCheckbox>
+          </>
+        )
+      }
+    } else {
+      return (
+        <>
+          <IonCheckbox justify="space-between"
+            disabled
+          >Send a notification the week before
+          </IonCheckbox>
+        </>
+      )
+    }
   }
 
   return (
@@ -419,7 +478,6 @@ const AddEvent: React.FC = () => {
                 labelPlacement="floating"
                 value={newEvent.eventTitle}
                 onIonInput={(e) => {
-                  console.log(church)
                   const inputValue = e.detail.value;
                   if (inputValue) {
                     if (inputValue.slice(-1) === " ") {
