@@ -33,12 +33,14 @@ const AddEvent: React.FC = () => {
 
   const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
   const [isDateChecked, setIsDateChecked] = useState(false)
+  const [isMultiDate, setIsMultiDate] = useState(false)
   const [isDayChecked, setIsDayChecked] = useState(false)
   const [isWeekChecked, setIsWeekChecked] = useState(false)
   const [newEvent, setNewEvent] = useState<NewEvent>({
     churchId: 0,
     eventTitle: "",
     date: today.toISOString(),
+    endDate: today.toISOString(),
     location: {
       street: "",
       city: "",
@@ -156,6 +158,7 @@ const AddEvent: React.FC = () => {
       churchId: 0,
       eventTitle: "",
       date: "",
+      endDate: "",
       location: {
         street: "",
         city: "",
@@ -317,6 +320,26 @@ const AddEvent: React.FC = () => {
       }, 50);
     }
   }
+
+  function handleIsMultiDateChecked() {
+
+    if (!isMultiDate) {
+      setIsMultiDate(true);
+
+      // The timers are because the amound off callbacks are unpredictable from the Ioncheckbox
+      setTimeout(() => {
+        setIsMultiDate(false);
+
+      }, 50);
+    } else {
+      setIsMultiDate(false);
+
+      setTimeout(() => {
+        setIsMultiDate(true);
+      }, 50);
+    }
+  }
+
 
   function returnNotiDay() {
     if (!isSameDay(newEvent.date, new Date)) {
@@ -490,33 +513,106 @@ const AddEvent: React.FC = () => {
               />
             </IonCol>
             <IonCol size="12">
-              <IonInput
-                className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
-                  }`}
-                required
-                type="text"
-                placeholder=""
-                label="Event Date and Time"
-                labelPlacement="floating"
-                value={localDate}
-                readonly
-                onClick={() => setShowDatePicker(true)}
-                onBlur={() => handleInputBlur("date")}
-              />
-              <IonModal isOpen={showDatePicker}>
-                <IonDatetime
-                  color="primary"
-                  value={newEvent.date}
-                  title="Event Date"
-                  showDefaultTitle={true}
-                  showDefaultButtons={true}
-                  onIonChange={(e) => {
-                    handleInputChange("date", e.detail.value as string);
-                    setShowDatePicker(false);
+              <IonItem>
+                <IonCheckbox justify="space-between"
+                  checked={isMultiDate}
+                  onClick={() => {
+                    handleIsMultiDateChecked()
                   }}
-                />
-              </IonModal>
+                >Is the event multiple days?</IonCheckbox>
+              </IonItem>
             </IonCol>
+            {isMultiDate ? (
+              <>
+                <IonCol size="12">
+                  <IonInput
+                    className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                      }`}
+                    required
+                    type="text"
+                    placeholder=""
+                    label="Start Event Date and Time"
+                    labelPlacement="floating"
+                    value={localDate}
+                    readonly
+                    onClick={() => setShowDatePicker(true)}
+                    onBlur={() => handleInputBlur("date")}
+                  />
+                  <IonModal isOpen={showDatePicker}>
+                    <IonDatetime
+                      color="primary"
+                      value={newEvent.date}
+                      title="Event Date"
+                      showDefaultTitle={true}
+                      showDefaultButtons={true}
+                      onIonChange={(e) => {
+                        handleInputChange("date", e.detail.value as string);
+                        setShowDatePicker(false);
+                      }}
+                    />
+                  </IonModal>
+                </IonCol>
+                <IonCol size="12">
+                  <IonInput
+                    className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                      }`}
+                    required
+                    type="text"
+                    placeholder=""
+                    label="End Event Date and Time"
+                    labelPlacement="floating"
+                    value={localDate}
+                    readonly
+                    onClick={() => setShowDatePicker(true)}
+                    onBlur={() => handleInputBlur("date")}
+                  />
+                  <IonModal isOpen={showDatePicker}>
+                    <IonDatetime
+                      color="primary"
+                      value={newEvent.date}
+                      title="Event Date"
+                      showDefaultTitle={true}
+                      showDefaultButtons={true}
+                      onIonChange={(e) => {
+                        handleInputChange("date", e.detail.value as string);
+                        setShowDatePicker(false);
+                      }}
+                    />
+                  </IonModal>
+                </IonCol>
+              </>
+            ) : (
+              <>
+                <IonCol size="12">
+                  <IonInput
+                    className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                      }`}
+                    required
+                    type="text"
+                    placeholder=""
+                    label="Event Date and Time"
+                    labelPlacement="floating"
+                    value={localDate}
+                    readonly
+                    onClick={() => setShowDatePicker(true)}
+                    onBlur={() => handleInputBlur("date")}
+                  />
+                  <IonModal isOpen={showDatePicker}>
+                    <IonDatetime
+                      color="primary"
+                      value={newEvent.date}
+                      title="Event Date"
+                      showDefaultTitle={true}
+                      showDefaultButtons={true}
+                      onIonChange={(e) => {
+                        handleInputChange("date", e.detail.value as string);
+                        setShowDatePicker(false);
+                      }}
+                    />
+                  </IonModal>
+                </IonCol>
+              </>
+            )}
             {dateDeleteNoti ? (
               <IonCol>
                 <IonItem>
@@ -543,22 +639,6 @@ const AddEvent: React.FC = () => {
             <IonCol size='12'>
               <IonItem>
                 {returnNotiWeek()}
-              </IonItem>
-            </IonCol>
-            <IonCol size="12">
-              <IonItem>
-                {church.churchId !== 0 ? (
-                  <IonCheckbox justify="space-between"
-                    checked={isDateChecked}
-                    onClick={() => {
-                      handleIsDateChecked()
-                    }}
-                  >Address is the same as church</IonCheckbox>
-                ) : (
-                  <IonCheckbox justify="space-between"
-                    disabled
-                  >Address is the same as church</IonCheckbox>
-                )}
               </IonItem>
             </IonCol>
             <IonCol size="12">
@@ -623,9 +703,7 @@ const AddEvent: React.FC = () => {
                 <IonSelectOption value="Arkansas">Arkansas</IonSelectOption>
                 <IonSelectOption value="California">California</IonSelectOption>
                 <IonSelectOption value="Colorado">Colorado</IonSelectOption>
-                <IonSelectOption value="Connecticut">
-                  Connecticut
-                </IonSelectOption>
+                <IonSelectOption value="Connecticut">Connecticut</IonSelectOption>
                 <IonSelectOption value="Delaware">Delaware</IonSelectOption>
                 <IonSelectOption value="Florida">Florida</IonSelectOption>
                 <IonSelectOption value="Georgia">Georgia</IonSelectOption>
@@ -711,6 +789,22 @@ const AddEvent: React.FC = () => {
                 }}
                 onBlur={() => handleInputBlur("location.zip")}
               />
+            </IonCol>
+            <IonCol size="12">
+              <IonItem>
+                {church.churchId !== 0 ? (
+                  <IonCheckbox justify="space-between"
+                    checked={isDateChecked}
+                    onClick={() => {
+                      handleIsDateChecked()
+                    }}
+                  >Address is the same as church</IonCheckbox>
+                ) : (
+                  <IonCheckbox justify="space-between"
+                    disabled
+                  >Address is the same as church</IonCheckbox>
+                )}
+              </IonItem>
             </IonCol>
             <IonCol size="12">
               <IonSelect

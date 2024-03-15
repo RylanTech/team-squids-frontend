@@ -36,6 +36,7 @@ export interface NewEvent {
   churchId: number;
   eventTitle: string;
   date: string;
+  endDate: string;
   location: {
     street: string;
     city: string;
@@ -106,8 +107,8 @@ export const EventContext = createContext<EventContextProps>({
   searchEvents: (query: string) => Promise.resolve()
 });
 
-const BASE_URL = "https://churchhive.net/api/event/";
-// const BASE_URL = "http://localhost:3001/api/event/";
+// const BASE_URL = "https://churchhive.net/api/event/";
+const BASE_URL = "http://localhost:3001/api/event/";
 
 export const EventProvider = ({ children }: EventContextProviderProps) => {
   const [events, setEvents] = useState<AllEvents[]>([]);
