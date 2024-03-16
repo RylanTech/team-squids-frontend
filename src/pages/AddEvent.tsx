@@ -72,8 +72,10 @@ const AddEvent: React.FC = () => {
   })
 
   const [localDate, setLocalDate] = useState<string>("");
+  const [localEndDate, setLocalEndDate] = useState<string>("");
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [message, setMessage] = useState<string>()
   const [dateDeleteNoti, setDateDeleteNoti] = useState(false)
 
@@ -94,6 +96,18 @@ const AddEvent: React.FC = () => {
         date: isoDate,
       }));
       setLocalDate(localDate);
+      setDateDeleteNoti(true)
+    } else if (name === "endDate") {
+      const isoDate = value as string;
+      const localDate = new Date(isoDate).toLocaleString("en-US", {
+        dateStyle: "full",
+        timeStyle: "short",
+      });
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        endDate: isoDate,
+      }));
+      setLocalEndDate(localDate);
       setDateDeleteNoti(true)
     } else if (name.startsWith("location.")) {
       const key = name.split(".")[1];
@@ -152,6 +166,7 @@ const AddEvent: React.FC = () => {
 
   async function resettingInputs() {
     setLocalDate("")
+    setLocalEndDate("")
     setDateDeleteNoti(false)
     setMessage(undefined)
     setNewEvent({
@@ -201,6 +216,7 @@ const AddEvent: React.FC = () => {
       weekBefore: isWeekChecked
     }
     let resp = await createEvent(evnt, triggerInfo);
+    console.log(resp)
     if (resp) {
 
       await resettingInputs().then(() => {
@@ -326,10 +342,13 @@ const AddEvent: React.FC = () => {
     if (!isMultiDate) {
       setIsMultiDate(true);
 
-      // The timers are because the amound off callbacks are unpredictable from the Ioncheckbox
       setTimeout(() => {
         setIsMultiDate(false);
-
+        setNewEvent((prevEvent) => ({
+          ...prevEvent,
+          endDate: null
+        }));
+        setLocalEndDate("")
       }, 50);
     } else {
       setIsMultiDate(false);
@@ -542,7 +561,7 @@ const AddEvent: React.FC = () => {
                     <IonDatetime
                       color="primary"
                       value={newEvent.date}
-                      title="Event Date"
+                      title="Event Start Date"
                       showDefaultTitle={true}
                       showDefaultButtons={true}
                       onIonChange={(e) => {
@@ -554,28 +573,28 @@ const AddEvent: React.FC = () => {
                 </IonCol>
                 <IonCol size="12">
                   <IonInput
-                    className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                    className={`ion-input-field ${isFieldTouched("endDate") ? "" : "ion-untouched"
                       }`}
                     required
                     type="text"
                     placeholder=""
                     label="End Event Date and Time"
                     labelPlacement="floating"
-                    value={localDate}
+                    value={localEndDate}
                     readonly
-                    onClick={() => setShowDatePicker(true)}
-                    onBlur={() => handleInputBlur("date")}
+                    onClick={() => setShowEndDatePicker(true)}
+                    onBlur={() => handleInputBlur("endDate")}
                   />
-                  <IonModal isOpen={showDatePicker}>
+                  <IonModal isOpen={showEndDatePicker}>
                     <IonDatetime
                       color="primary"
-                      value={newEvent.date}
-                      title="Event Date"
+                      value={newEvent.endDate}
+                      title="Event End Date"
                       showDefaultTitle={true}
                       showDefaultButtons={true}
                       onIonChange={(e) => {
-                        handleInputChange("date", e.detail.value as string);
-                        setShowDatePicker(false);
+                        handleInputChange("endDate", e.detail.value as string);
+                        setShowEndDatePicker(false);
                       }}
                     />
                   </IonModal>
@@ -605,7 +624,7 @@ const AddEvent: React.FC = () => {
                       showDefaultTitle={true}
                       showDefaultButtons={true}
                       onIonChange={(e) => {
-                        handleInputChange("date", e.detail.value as string);
+                        handleInputChange("endDate", e.detail.value as string);
                         setShowDatePicker(false);
                       }}
                     />

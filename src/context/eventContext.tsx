@@ -17,6 +17,7 @@ export interface Event {
   churchId: number;
   eventTitle: string;
   date: string;
+  endDate: string | null
   location: Location;
   eventType:
     | "Family"
@@ -36,14 +37,13 @@ export interface NewEvent {
   churchId: number;
   eventTitle: string;
   date: string;
-  endDate: string;
+  endDate: string | null;
   location: {
     street: string;
     city: string;
     state: string;
     zip: string;
   };
-
   eventType:
     | "Family"
     | "Youth"
@@ -107,8 +107,8 @@ export const EventContext = createContext<EventContextProps>({
   searchEvents: (query: string) => Promise.resolve()
 });
 
-// const BASE_URL = "https://churchhive.net/api/event/";
-const BASE_URL = "http://localhost:3001/api/event/";
+const BASE_URL = "https://churchhive.net/api/event/";
+// const BASE_URL = "http://localhost:3001/api/event/";
 
 export const EventProvider = ({ children }: EventContextProviderProps) => {
   const [events, setEvents] = useState<AllEvents[]>([]);
@@ -162,7 +162,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
       const response = await axios.post(BASE_URL, { newEvent, triggerInfo }, {
         headers: {
           ...authHeader(),
-          'request-body-version': 'v2',
+          'request-body-version': 'v3',
         },
       });
       await Promise.all([getAllEvents(), getAllUserEvents()]);
