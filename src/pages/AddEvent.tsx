@@ -47,6 +47,7 @@ const AddEvent: React.FC = () => {
       state: "",
       zip: "",
     },
+    eventAudience: "",
     eventType: "",
     description: "",
     imageUrl: "",
@@ -180,6 +181,7 @@ const AddEvent: React.FC = () => {
         state: "",
         zip: "",
       },
+      eventAudience: "",
       eventType: "",
       description: "",
       imageUrl: "",
@@ -624,7 +626,7 @@ const AddEvent: React.FC = () => {
                       showDefaultTitle={true}
                       showDefaultButtons={true}
                       onIonChange={(e) => {
-                        handleInputChange("endDate", e.detail.value as string);
+                        handleInputChange("date", e.detail.value as string);
                         setShowDatePicker(false);
                       }}
                     />
@@ -825,7 +827,7 @@ const AddEvent: React.FC = () => {
                 )}
               </IonItem>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="6">
               <IonSelect
                 className={`ion-input-field ${isFieldTouched("eventType") ? "" : "ion-untouched"
                   }`}
@@ -847,6 +849,24 @@ const AddEvent: React.FC = () => {
                 <IonSelectOption value="Womans">Womans</IonSelectOption>
                 <IonSelectOption value="Mens">Mens</IonSelectOption>
                 <IonSelectOption value="Senior">Senior</IonSelectOption>
+              </IonSelect>
+            </IonCol>
+            <IonCol size="6">
+              <IonSelect
+                className={`ion-input-field ${isFieldTouched("eventAudience") ? "" : "ion-untouched"
+                  }`}
+                placeholder="Select Event Audience"
+                label="Event Audience"
+                labelPlacement="floating"
+                value={newEvent.eventAudience}
+                onIonChange={(e) =>
+                  handleInputChange("eventAudience", e.detail.value!)
+                }
+                onBlur={() => handleInputBlur("eventAudience")}
+              >
+                <IonSelectOption value="Everyone">Everyone</IonSelectOption>
+                <IonSelectOption value="Church-Wide">Church-Wide</IonSelectOption>
+                <IonSelectOption value="Church Group">Church Group</IonSelectOption>
               </IonSelect>
             </IonCol>
             <IonCol size="12">

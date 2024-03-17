@@ -13,6 +13,8 @@ import {
   IonDatetime,
   IonModal,
   IonImg,
+  IonItem,
+  IonCheckbox,
 } from "@ionic/react";
 import { useHistory, useParams } from "react-router-dom";
 import PageHeader from "../components/Global/PageHeader";
@@ -34,17 +36,20 @@ const EditEvent: React.FC = () => {
   const today: Date = new Date();
 
   const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
+  const [isMultiDate, setIsMultiDate] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<Event>({
     eventId: 0,
     churchId: 0,
     eventTitle: "",
     date: today.toISOString(),
+    endDate: today.toISOString(),
     location: {
       street: "",
       city: "",
       state: "",
       zip: "",
     },
+    eventAudience: "",
     eventType: "Youth",
     description: "",
     imageUrl: "",
@@ -59,13 +64,23 @@ const EditEvent: React.FC = () => {
         dateStyle: "full",
         timeStyle: "short",
       });
-      setLocalDate(localDate);
+      setLocalDate(localDate)
+      if (currentEvent.endDate) {
+        setIsMultiDate(true)
+        const localEndDate = new Date(currentEvent.endDate).toLocaleString("en-US", {
+          dateStyle: "full",
+          timeStyle: "short",
+        });
+        setLocalEndDate(localEndDate);
+      }
     })();
   }, []);
 
   const [localDate, setLocalDate] = useState<string>("");
+  const [localEndDate, setLocalEndDate] = useState<string>("");
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
 
   const history = useHistory();
 
@@ -84,6 +99,17 @@ const EditEvent: React.FC = () => {
         date: isoDate,
       }));
       setLocalDate(localDate);
+    } else if (name === "endDate") {
+      const isoDate = value as string;
+      const localDate = new Date(isoDate).toLocaleString("en-US", {
+        dateStyle: "full",
+        timeStyle: "short",
+      });
+      setCurrentEvent((prevEvent) => ({
+        ...prevEvent,
+        endDate: isoDate,
+      }));
+      setLocalEndDate(localDate);
     } else if (name.startsWith("location.")) {
       const key = name.split(".")[1];
       setCurrentEvent((prevEvent) => ({
@@ -130,6 +156,28 @@ const EditEvent: React.FC = () => {
     }
   };
 
+  function handleIsMultiDateChecked() {
+
+    if (!isMultiDate) {
+      setIsMultiDate(true);
+
+      setTimeout(() => {
+        setIsMultiDate(false);
+        setCurrentEvent((prevEvent) => ({
+          ...prevEvent,
+          endDate: null
+        }));
+        setLocalEndDate("")
+      }, 50);
+    } else {
+      setIsMultiDate(false);
+
+      setTimeout(() => {
+        setIsMultiDate(true);
+      }, 50);
+    }
+  }
+
   const handleSubmit = async (event: any) => {
     const updatedEvent: UpdateEvent = {
       userId: currentUserId,
@@ -137,12 +185,14 @@ const EditEvent: React.FC = () => {
       churchId: currentEvent.churchId,
       eventTitle: currentEvent.eventTitle,
       date: currentEvent.date,
+      endDate: currentEvent.endDate,
       location: {
         street: currentEvent.location.street,
         city: currentEvent.location.city,
         state: currentEvent.location.state,
         zip: currentEvent.location.zip,
       },
+      eventAudience: currentEvent.eventAudience,
       eventType: currentEvent.eventType,
       description: currentEvent.description,
       imageUrl: currentEvent.imageUrl,
@@ -203,7 +253,7 @@ const EditEvent: React.FC = () => {
                 />
               </IonButton>
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="6">
               <IonSelect
                 className={`ion-input-field ${
                   isFieldTouched("churchId") ? "" : "ion-untouched"
@@ -228,7 +278,7 @@ const EditEvent: React.FC = () => {
                   ))}
               </IonSelect>
             </IonCol>
-            <IonCol size="7">
+            <IonCol size="6">
               <IonInput
                 className={`ion-input-field ${
                   isFieldTouched("eventTitle") ? "" : "ion-untouched"
@@ -250,35 +300,107 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("eventTitle")}
               />
             </IonCol>
-            <IonCol size="5">
-              <IonInput
-                className={`ion-input-field ${
-                  isFieldTouched("date") ? "" : "ion-untouched"
-                }`}
-                required
-                type="text"
-                placeholder=""
-                label="Event Date and Time"
-                labelPlacement="floating"
-                value={localDate}
-                readonly
-                onClick={() => setShowDatePicker(true)}
-                onBlur={() => handleInputBlur("date")}
-              />
-              <IonModal isOpen={showDatePicker}>
-                <IonDatetime
-                  color="primary"
-                  value={currentEvent.date}
-                  title="Event Date"
-                  showDefaultTitle={true}
-                  showDefaultButtons={true}
-                  onIonChange={(e) => {
-                    handleInputChange("date", e.detail.value as string);
-                    setShowDatePicker(false);
+            <IonCol size="12">
+              <IonItem>
+                <IonCheckbox justify="space-between"
+                  checked={isMultiDate}
+                  onClick={() => {
+                    handleIsMultiDateChecked()
                   }}
-                />
-              </IonModal>
+                >Is the event multiple days?</IonCheckbox>
+              </IonItem>
             </IonCol>
+            {isMultiDate ? (
+              <>
+                <IonCol size="12">
+                  <IonInput
+                    className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                      }`}
+                    required
+                    type="text"
+                    placeholder=""
+                    label="Start Event Date and Time"
+                    labelPlacement="floating"
+                    value={localDate}
+                    readonly
+                    onClick={() => setShowDatePicker(true)}
+                    onBlur={() => handleInputBlur("date")}
+                  />
+                  <IonModal isOpen={showDatePicker}>
+                    <IonDatetime
+                      color="primary"
+                      value={currentEvent.date}
+                      title="Event Start Date"
+                      showDefaultTitle={true}
+                      showDefaultButtons={true}
+                      onIonChange={(e) => {
+                        handleInputChange("date", e.detail.value as string);
+                        setShowDatePicker(false);
+                      }}
+                    />
+                  </IonModal>
+                </IonCol>
+                <IonCol size="12">
+                  <IonInput
+                    className={`ion-input-field ${isFieldTouched("endDate") ? "" : "ion-untouched"
+                      }`}
+                    required
+                    type="text"
+                    placeholder=""
+                    label="End Event Date and Time"
+                    labelPlacement="floating"
+                    value={localEndDate}
+                    readonly
+                    onClick={() => setShowEndDatePicker(true)}
+                    onBlur={() => handleInputBlur("endDate")}
+                  />
+                  <IonModal isOpen={showEndDatePicker}>
+                    <IonDatetime
+                      color="primary"
+                      value={currentEvent.endDate}
+                      title="Event End Date"
+                      showDefaultTitle={true}
+                      showDefaultButtons={true}
+                      onIonChange={(e) => {
+                        handleInputChange("endDate", e.detail.value as string);
+                        setShowEndDatePicker(false);
+                      }}
+                    />
+                  </IonModal>
+                </IonCol>
+              </>
+            ) : (
+              <>
+                <IonCol size="12">
+                  <IonInput
+                    className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                      }`}
+                    required
+                    type="text"
+                    placeholder=""
+                    label="Event Date and Time"
+                    labelPlacement="floating"
+                    value={localDate}
+                    readonly
+                    onClick={() => setShowDatePicker(true)}
+                    onBlur={() => handleInputBlur("date")}
+                  />
+                  <IonModal isOpen={showDatePicker}>
+                    <IonDatetime
+                      color="primary"
+                      value={currentEvent.date}
+                      title="Event Date"
+                      showDefaultTitle={true}
+                      showDefaultButtons={true}
+                      onIonChange={(e) => {
+                        handleInputChange("endDate", e.detail.value as string);
+                        setShowDatePicker(false);
+                      }}
+                    />
+                  </IonModal>
+                </IonCol>
+              </>
+            )}
             <IonCol size="12">
               <IonInput
                 className={`ion-input-field ${

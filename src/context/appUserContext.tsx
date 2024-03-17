@@ -29,13 +29,13 @@ const BASE_URL = "https://churchhive.net/api/appuser/";
 
 export const AppUserProvider = ({ children }: AppUserContextProviderProps) => {
 
-    const createAppUser = async (userInfo: appUser) => {
-        try {
-            await axios.post(BASE_URL, userInfo);
-        } catch (error: any) {
-            return
-        }
-    };
+    // const createAppUser = async (userInfo: appUser) => {
+    //     try {
+    //         await axios.post(BASE_URL, userInfo);
+    //     } catch (error: any) {
+    //         return
+    //     }
+    // };
 
     const updateAppUser = async (userInfo: appUser) => {
         try {

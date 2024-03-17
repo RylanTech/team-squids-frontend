@@ -17,6 +17,7 @@ const EventInfo: React.FC<EventInfoProps> = ({
     location: { street, city, state, zip },
     date,
     endDate,
+    eventAudience,
     eventType,
     description,
     imageUrl,
@@ -162,7 +163,10 @@ const EventInfo: React.FC<EventInfoProps> = ({
         <h4>Description</h4>
 
         <p>{description}</p>
+        
+        <p>Audience: {eventAudience}</p>
       </IonCol>
+  
       <IonCol size="12" >
         <IonRow>
           {event && event.Church && (

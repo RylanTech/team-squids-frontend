@@ -17,8 +17,9 @@ export interface Event {
   churchId: number;
   eventTitle: string;
   date: string;
-  endDate: string | null
+  endDate: string | null 
   location: Location;
+  eventAudience: string;
   eventType:
     | "Family"
     | "Youth"
@@ -53,6 +54,7 @@ export interface NewEvent {
     | "Mens"
     | "Senior"
     | "";
+  eventAudience: string;
   description: string;
   imageUrl: string;
 }
