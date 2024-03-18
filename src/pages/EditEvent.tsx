@@ -556,7 +556,7 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("location.zip")}
               />
             </IonCol>
-            <IonCol size="12">
+            <IonCol size="6">
               <IonSelect
                 className={`ion-input-field ${
                   isFieldTouched("eventType") ? "" : "ion-untouched"
@@ -571,14 +571,31 @@ const EditEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("eventType")}
               >
                 <IonSelectOption value="Family">Family</IonSelectOption>
+                <IonSelectOption value="Kids">Kids</IonSelectOption>
                 <IonSelectOption value="Youth">Youth</IonSelectOption>
-                <IonSelectOption value="Young Adults">
-                  Young Adults
-                </IonSelectOption>
+                <IonSelectOption value="Young Adults">Young Adults</IonSelectOption>
                 <IonSelectOption value="Single">Single</IonSelectOption>
                 <IonSelectOption value="Womans">Womans</IonSelectOption>
                 <IonSelectOption value="Mens">Mens</IonSelectOption>
                 <IonSelectOption value="Senior">Senior</IonSelectOption>
+              </IonSelect>
+            </IonCol>
+            <IonCol size="6">
+              <IonSelect
+                className={`ion-input-field ${isFieldTouched("eventAudience") ? "" : "ion-untouched"
+                  }`}
+                placeholder="Select Event Audience"
+                label="Event Audience"
+                labelPlacement="floating"
+                value={currentEvent.eventAudience}
+                onIonChange={(e) =>
+                  handleInputChange("eventAudience", e.detail.value!)
+                }
+                onBlur={() => handleInputBlur("eventAudience")}
+              >
+                <IonSelectOption value="Everyone">Everyone</IonSelectOption>
+                <IonSelectOption value="Church-Wide">Church-Wide</IonSelectOption>
+                <IonSelectOption value="Church Group">Church Group</IonSelectOption>
               </IonSelect>
             </IonCol>
             <IonCol size="12">

@@ -839,10 +839,9 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("eventType")}
               >
                 <IonSelectOption value="Family">Family</IonSelectOption>
+                <IonSelectOption value="Kids">Kids</IonSelectOption>
                 <IonSelectOption value="Youth">Youth</IonSelectOption>
-                <IonSelectOption value="Young Adults">
-                  Young Adults
-                </IonSelectOption>
+                <IonSelectOption value="Young Adults">Young Adults</IonSelectOption>
                 <IonSelectOption value="Single">Single</IonSelectOption>
                 <IonSelectOption value="Womans">Womans</IonSelectOption>
                 <IonSelectOption value="Mens">Mens</IonSelectOption>

@@ -10,7 +10,6 @@ export interface appUser {
 }
 
 interface AppUserContextProps {
-    // createAppUser: (userInfo: appUser) => Promise<void>;
     updateAppUser: (userInfo: appUser) => Promise<void>;
 }
 
@@ -19,23 +18,14 @@ interface AppUserContextProviderProps {
 }
 
 export const AppUserContext = createContext<AppUserContextProps>({
-    // createAppUser: () => Promise.resolve(),
     updateAppUser: () => Promise.resolve(),
 });
 
-const BASE_URL = "https://churchhive.net/api/appuser/";
-// const BASE_URL = "http://localhost:3001/api/appuser/";
+// const BASE_URL = "https://churchhive.net/api/appuser/";
+const BASE_URL = "http://localhost:3001/api/appuser/";
 
 
 export const AppUserProvider = ({ children }: AppUserContextProviderProps) => {
-
-    // const createAppUser = async (userInfo: appUser) => {
-    //     try {
-    //         await axios.post(BASE_URL, userInfo);
-    //     } catch (error: any) {
-    //         return
-    //     }
-    // };
 
     const updateAppUser = async (userInfo: appUser) => {
         try {
@@ -49,7 +39,6 @@ export const AppUserProvider = ({ children }: AppUserContextProviderProps) => {
         <AppUserContext.Provider
             value={{
                 updateAppUser
-                // createAppUser
             }}
         >
             {children}

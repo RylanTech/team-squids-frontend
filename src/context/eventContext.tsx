@@ -164,7 +164,7 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
       const response = await axios.post(BASE_URL, { newEvent, triggerInfo }, {
         headers: {
           ...authHeader(),
-          'request-body-version': 'v3',
+          'request-body-version': 'v4',
         },
       });
       await Promise.all([getAllEvents(), getAllUserEvents()]);
