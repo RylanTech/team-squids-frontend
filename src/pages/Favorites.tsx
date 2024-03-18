@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import {
   IonCol,
   IonContent,
@@ -6,28 +6,20 @@ import {
   IonHeader,
   IonPage,
   IonRow,
-  IonSearchbar,
   IonTitle,
   IonToolbar,
   useIonViewWillEnter,
 } from "@ionic/react";
 import { ChurchContext } from "../context/churchContext";
-import { trashBin } from "ionicons/icons";
 import FavList from "../components/Favorites/FavList";
-import { useParams } from "react-router";
 
 const Favorites: React.FC = () => {
 
-  const { searchChurches, getFavChurches, favoriteChurches } = useContext(ChurchContext);
+  const { getFavChurches, favoriteChurches } = useContext(ChurchContext);
 
   useIonViewWillEnter(() => {
     getFavChurches();
   });
-
-  const handleSearch = async (searchQuery: string) => {
-    // Call function to search locations base on query
-    await searchChurches(searchQuery)
-  };
 
   const handleClear = async () => {
     await getFavChurches();

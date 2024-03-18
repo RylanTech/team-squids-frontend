@@ -113,7 +113,7 @@ const EventInfo: React.FC<EventInfoProps> = ({
       </IonCol>
       <IonCol size="12">
         <IonText color="secondary">
-          <h6>{eventType}</h6>
+          <h6>{eventType} - {eventAudience}</h6>
         </IonText>
         <h1 className={styles.title}>{eventTitle}</h1>
         <IonText color="secondary">
@@ -123,14 +123,14 @@ const EventInfo: React.FC<EventInfoProps> = ({
       {endDate ? (
         <>
         <IonCol size="12">
-          <h4>Date and Time</h4>
+          <h4>Date</h4>
 
           <p>
-            {eventDay}, {eventDate} at {eventTime}
+            {eventDay}, {eventDate}
           </p>
           Through
           <p>
-            {eventEndDay}, {eventEndDate} at {eventEndTime}
+            {eventEndDay}, {eventEndDate}
           </p>
         </IonCol>
       </>
@@ -145,7 +145,6 @@ const EventInfo: React.FC<EventInfoProps> = ({
         </IonCol>
       </>
       )}
-      {/* {eventDateType()} */}
       <IonCol size="12">
         <h4>Location</h4>
 
@@ -163,8 +162,9 @@ const EventInfo: React.FC<EventInfoProps> = ({
         <h4>Description</h4>
 
         <p>{description}</p>
-        
-        <p>Audience: {eventAudience}</p>
+      </IonCol>
+      <IonCol size="12">
+        <h4></h4>
       </IonCol>
   
       <IonCol size="12" >

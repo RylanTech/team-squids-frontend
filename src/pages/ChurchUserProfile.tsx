@@ -12,6 +12,7 @@ import {
   IonPage,
   IonRouterLink,
   IonRow,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import ChurchList from "../components/Churches/ChurchList";
 import ChurchUserInfo from "../components/ChurchUsers/ChurchUserInfo";
@@ -34,30 +35,32 @@ const UserProfile: React.FC = () => {
   );
   const { userEvents } = useContext(EventContext);
 
-  const { checkCurrentUser, verifyCurrentUser } = useContext(ChurchUserContext);
+  const { checkCurrentUser, verifyCurrentUser, logoutChurchUser } = useContext(ChurchUserContext);
 
-  useEffect(() => {
+
+  useIonViewWillEnter(() => {
     async function checkingUserId() {
-      let userId = params.userId.toString();
-      let isChecked = await checkCurrentUser(userId);
-      if (isChecked === false) {
-        history.push("/churches");
+      let isChecked = await verifyCurrentUser();
+      console.log(isChecked)
+      if (isChecked === null) {
+        history.push("/users")
       }
     }
     checkingUserId();
-  }, []);
+  });
 
-  async function checkingUserId() {
-    let userId = params.userId.toString();
-    let isChecked = await checkCurrentUser(userId);
-    if (isChecked === false) {
-      history.push("/churches");
-    }
-  }
-
-  useEffect(() => {
-    checkingUserId();
-  }, []);
+    // useEffect(() => {
+    //   async function checkingUserId() {
+    //     let userId = params.userId.toString();
+    //     let isChecked = await checkCurrentUser(userId);
+    //     console.log(isChecked)
+    //     if (isChecked === false) {
+    //       setCurrentUserId(0)
+    //       history.push("/users");
+    //     }
+    //   }
+    //   checkingUserId();
+    // },[])
 
   async function handleLogout() {
     localStorage.removeItem("myChurchUserToken");
