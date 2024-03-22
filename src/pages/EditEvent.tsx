@@ -200,6 +200,7 @@ const EditEvent: React.FC = () => {
     if (updatedEvent.imageUrl === "") {
       updatedEvent.imageUrl = "blank"
     }
+    console.log(updatedEvent)
     event.preventDefault();
     await updateEvent(updatedEvent);
     history.push(`/user/${currentUserId}`);
@@ -393,7 +394,7 @@ const EditEvent: React.FC = () => {
                       showDefaultTitle={true}
                       showDefaultButtons={true}
                       onIonChange={(e) => {
-                        handleInputChange("endDate", e.detail.value as string);
+                        handleInputChange("date", e.detail.value as string);
                         setShowDatePicker(false);
                       }}
                     />

@@ -40,7 +40,7 @@ const AddEvent: React.FC = () => {
     churchId: 0,
     eventTitle: "",
     date: today.toISOString(),
-    endDate: today.toISOString(),
+    endDate: null,
     location: {
       street: "",
       city: "",
@@ -213,6 +213,7 @@ const AddEvent: React.FC = () => {
       dayBefore: isDayChecked,
       weekBefore: isWeekChecked
     }
+
     let resp = await createEvent(evnt, triggerInfo);
     console.log(resp)
     if (resp) {

@@ -49,19 +49,6 @@ const UserProfile: React.FC = () => {
     checkingUserId();
   });
 
-    // useEffect(() => {
-    //   async function checkingUserId() {
-    //     let userId = params.userId.toString();
-    //     let isChecked = await checkCurrentUser(userId);
-    //     console.log(isChecked)
-    //     if (isChecked === false) {
-    //       setCurrentUserId(0)
-    //       history.push("/users");
-    //     }
-    //   }
-    //   checkingUserId();
-    // },[])
-
   async function handleLogout() {
     localStorage.removeItem("myChurchUserToken");
     verifyCurrentUser();
@@ -110,6 +97,14 @@ const UserProfile: React.FC = () => {
                 </IonRouterLink>
               </div>
               {userEvents.length > 0 && <EventsList events={userEvents} />}
+            </IonCol>
+          </IonRow>
+          <IonRow>
+          <IonCol size="12">
+              <div className={styles.addButton}>
+                <h4>News feed</h4>
+              </div>
+              
             </IonCol>
           </IonRow>
           <IonCol>

@@ -27,16 +27,19 @@ const Favorites: React.FC = () => {
 
   function isFav() {
     let i = localStorage.getItem("favoriteChurches")
+    console.log(i)
     if (!i) {
       return (
         <center>
           <h2>No Favorite Churches</h2>
+          <p>Favorite a church to receive notifications about their events!</p>
         </center>
       )
     } else if (i === "[]") {
       return (
         <center>
           <h2>No Favorite Churches</h2>
+          <p>Favorite a church to receive notifications about their events!</p>
         </center>
       )
     } else {
