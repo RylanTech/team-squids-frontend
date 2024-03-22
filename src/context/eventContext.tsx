@@ -17,7 +17,9 @@ export interface Event {
   churchId: number;
   eventTitle: string;
   date: string;
+  endDate: string | null 
   location: Location;
+  eventAudience: string;
   eventType:
     | "Family"
     | "Youth"
@@ -36,13 +38,13 @@ export interface NewEvent {
   churchId: number;
   eventTitle: string;
   date: string;
+  endDate: string | null;
   location: {
     street: string;
     city: string;
     state: string;
     zip: string;
   };
-
   eventType:
     | "Family"
     | "Youth"
@@ -52,6 +54,7 @@ export interface NewEvent {
     | "Mens"
     | "Senior"
     | "";
+  eventAudience: string;
   description: string;
   imageUrl: string;
 }
@@ -67,6 +70,13 @@ export interface OneEvent extends Event {
   Church: Church;
 }
 
+export interface TriggerInfo {
+  body: string;
+  title: string;
+  dayBefore: boolean;
+  weekBefore: boolean;
+}
+
 interface EventContextProps {
   events: AllEvents[];
   userEvents: AllEvents[];
@@ -74,7 +84,7 @@ interface EventContextProps {
   getAllEvents: () => Promise<void>;
   postImage: (formData: any) => Promise<any>;
   getAllUserEvents: () => Promise<void>;
-  createEvent: (newEvent: NewEvent) => Promise<NewEvent>;
+  createEvent: (newEvent: NewEvent, triggerInfo: TriggerInfo) => Promise<NewEvent>;
   getEvent: (eventId: number) => Promise<OneEvent>;
   updateEvent: (updatedEvent: Event) => Promise<Event>;
   deleteEvent: (eventId: number) => Promise<Event>;
@@ -96,7 +106,7 @@ export const EventContext = createContext<EventContextProps>({
   getEvent: (eventId: number) => Promise.resolve({} as OneEvent),
   updateEvent: (updatedEvent: Event) => Promise.resolve(updatedEvent),
   deleteEvent: (eventId: number) => Promise.resolve({} as Event),
-  searchEvents: (query: string) => Promise.resolve(),
+  searchEvents: (query: string) => Promise.resolve()
 });
 
 const BASE_URL = "https://churchhive.net/api/event/";
@@ -105,7 +115,7 @@ const BASE_URL = "https://churchhive.net/api/event/";
 export const EventProvider = ({ children }: EventContextProviderProps) => {
   const [events, setEvents] = useState<AllEvents[]>([]);
   const [userEvents, setUserEvents] = useState<AllEvents[]>([]);
-  const { currentUserId, verifyCurrentUser } = useContext(ChurchUserContext);
+  const { currentUserId } = useContext(ChurchUserContext);
 
   const getAllEvents = async () => {
     try {
@@ -149,10 +159,13 @@ export const EventProvider = ({ children }: EventContextProviderProps) => {
     }
   };
 
-  const createEvent = async (newEvent: NewEvent) => {
+  const createEvent = async (newEvent: NewEvent, triggerInfo: TriggerInfo) => {
     try {
-      const response = await axios.post(BASE_URL, newEvent, {
-        headers: authHeader(),
+      const response = await axios.post(BASE_URL, { newEvent, triggerInfo }, {
+        headers: {
+          ...authHeader(),
+          'request-body-version': 'v4',
+        },
       });
       await Promise.all([getAllEvents(), getAllUserEvents()]);
       return response.data;

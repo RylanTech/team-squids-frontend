@@ -12,6 +12,7 @@ import {
   IonPage,
   IonRouterLink,
   IonRow,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import ChurchList from "../components/Churches/ChurchList";
 import ChurchUserInfo from "../components/ChurchUsers/ChurchUserInfo";
@@ -34,30 +35,19 @@ const UserProfile: React.FC = () => {
   );
   const { userEvents } = useContext(EventContext);
 
-  const { checkCurrentUser, verifyCurrentUser } = useContext(ChurchUserContext);
+  const { checkCurrentUser, verifyCurrentUser, logoutChurchUser } = useContext(ChurchUserContext);
 
-  useEffect(() => {
+
+  useIonViewWillEnter(() => {
     async function checkingUserId() {
-      let userId = params.userId.toString();
-      let isChecked = await checkCurrentUser(userId);
-      if (isChecked === false) {
-        history.push("/churches");
+      let isChecked = await verifyCurrentUser();
+      console.log(isChecked)
+      if (isChecked === null) {
+        history.push("/users")
       }
     }
     checkingUserId();
-  }, []);
-
-  async function checkingUserId() {
-    let userId = params.userId.toString();
-    let isChecked = await checkCurrentUser(userId);
-    if (isChecked === false) {
-      history.push("/churches");
-    }
-  }
-
-  useEffect(() => {
-    checkingUserId();
-  }, []);
+  });
 
   async function handleLogout() {
     localStorage.removeItem("myChurchUserToken");
@@ -107,6 +97,14 @@ const UserProfile: React.FC = () => {
                 </IonRouterLink>
               </div>
               {userEvents.length > 0 && <EventsList events={userEvents} />}
+            </IonCol>
+          </IonRow>
+          <IonRow>
+          <IonCol size="12">
+              <div className={styles.addButton}>
+                <h4>News feed</h4>
+              </div>
+              
             </IonCol>
           </IonRow>
           <IonCol>

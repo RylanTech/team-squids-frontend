@@ -107,7 +107,7 @@ export const ChurchUserProvider = ({
         if (response.status === 200) {
           let decoded: decoded = await jwt_decode(LOGIN_TOKEN);
           setCurrentUserId(decoded.userId);
-          setIsLoggedIn(true);
+          setIsLoggedIn(true); 
           return decoded;
         } else {
           localStorage.removeItem("myChurchUserToken");
@@ -133,6 +133,13 @@ export const ChurchUserProvider = ({
     }
   };
   
+  const handlePhoneId = async (phoneId: any) => {
+    try {
+      axios.post(BASE_URL + 'deviceid', { phoneId });
+    } catch (error: any) {
+      return
+    }
+  };
 
   const createChurchUser = async (newUser: NewChurchUser) => {
     const newUserURL = `${BASE_URL}create-account`;

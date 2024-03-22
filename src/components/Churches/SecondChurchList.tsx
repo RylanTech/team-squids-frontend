@@ -24,14 +24,16 @@ const SecondChurchList: FC<ChurchListProps> = ({ churches }) => {
 
     return (
         <>
-            <IonCol size="12" sizeMd="6">
-                <IonList>
-                    {churches.map((church) => (
+            <IonCol size="12" sizeMd="6" id="subject-conatiner">
+                <IonCol className="subject-container">
+                    <IonList>
+                        {churches.map((church) => (
 
-                        <SecondChurchItem setChurch={(church: any) => SetChurch(church)} church={church} key={church.churchId} />
+                            <SecondChurchItem setChurch={(church: any) => SetChurch(church)} church={church} key={church.churchId} />
 
-                    ))}
-                </IonList>
+                        ))}
+                    </IonList>
+                </IonCol>
             </IonCol>
             <IonCol size="12" sizeMd="6" id="subject-container">
                 {church ? (

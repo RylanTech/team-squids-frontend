@@ -42,7 +42,7 @@ import Favorites from "./pages/Favorites";
 setupIonicReact();
 
 const App: React.FC = () => {
-  const { isLoggedIn, currentUserId } = useContext(ChurchUserContext);
+  const { currentUserId } = useContext(ChurchUserContext);
 
   return (
     <IonApp>

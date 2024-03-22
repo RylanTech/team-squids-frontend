@@ -16,6 +16,8 @@ const EventInfo: React.FC<EventInfoProps> = ({
     eventTitle,
     location: { street, city, state, zip },
     date,
+    endDate,
+    eventAudience,
     eventType,
     description,
     imageUrl,
@@ -52,6 +54,29 @@ const EventInfo: React.FC<EventInfoProps> = ({
   const eventDay = isoDate ? formatDay.format(isoDate) : "";
   const eventTime = isoDate ? formatTime.format(isoDate) : "";
 
+  let eventEndDate: any
+  let eventEndDay: any
+  let eventEndTime: any
+
+  if (endDate) {
+    const thisEndIsoDate = new Date(convertUtcToLocal(endDate))
+    const isoEndDate = new Date(thisEndIsoDate);
+    const formatEndDate = Intl.DateTimeFormat("en-us", {
+      dateStyle: "long",
+    });
+    const formatEndDay = Intl.DateTimeFormat("en-us", {
+      weekday: "long",
+    });
+    const formatEndTime = Intl.DateTimeFormat("en-us", {
+      timeStyle: "short",
+    });
+
+    eventEndDate = isoEndDate ? formatEndDate.format(isoEndDate) : "";
+    eventEndDay = isoEndDate ? formatEndDay.format(isoEndDate) : "";
+    eventEndTime = isoEndDate ? formatEndTime.format(isoEndDate) : "";
+
+  }
+  
   const { apiKey } = useContext(ChurchUserContext)
 
   const staticMap = `https://maps.googleapis.com/maps/api/staticmap?center=${street},${city},${state}
@@ -71,7 +96,6 @@ const EventInfo: React.FC<EventInfoProps> = ({
 
   function ifImg() {
     if (imageUrl === "blank") {
-      console.log(event)
       return (
         <></>
       )
@@ -82,8 +106,6 @@ const EventInfo: React.FC<EventInfoProps> = ({
     }
   }
 
-
-
   return (
     <IonRow className={styles.light}>
       <IonCol size="12">
@@ -91,20 +113,38 @@ const EventInfo: React.FC<EventInfoProps> = ({
       </IonCol>
       <IonCol size="12">
         <IonText color="secondary">
-          <h6>{eventType}</h6>
+          <h6>{eventType} - {eventAudience}</h6>
         </IonText>
         <h1 className={styles.title}>{eventTitle}</h1>
         <IonText color="secondary">
           <h6>{Church.churchName}</h6>
         </IonText>
       </IonCol>
-      <IonCol size="12">
-        <h4>Date and Time</h4>
+      {endDate ? (
+        <>
+        <IonCol size="12">
+          <h4>Date</h4>
 
-        <p>
-          {eventDay}, {eventDate} at {eventTime}
-        </p>
-      </IonCol>
+          <p>
+            {eventDay}, {eventDate}
+          </p>
+          Through
+          <p>
+            {eventEndDay}, {eventEndDate}
+          </p>
+        </IonCol>
+      </>
+      ) : (
+        <>
+        <IonCol size="12">
+          <h4>Date and Time</h4>
+
+          <p>
+            {eventDay}, {eventDate} at {eventTime}
+          </p>
+        </IonCol>
+      </>
+      )}
       <IonCol size="12">
         <h4>Location</h4>
 
@@ -123,6 +163,10 @@ const EventInfo: React.FC<EventInfoProps> = ({
 
         <p>{description}</p>
       </IonCol>
+      <IonCol size="12">
+        <h4></h4>
+      </IonCol>
+  
       <IonCol size="12" >
         <IonRow>
           {event && event.Church && (

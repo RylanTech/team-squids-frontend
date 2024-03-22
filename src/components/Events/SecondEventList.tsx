@@ -19,21 +19,23 @@ const SecondEventsList: React.FC<EventListProps> = ({ events }) => {
   return (
     <>
       <IonRow>
-      <IonCol size="12" sizeMd="6">
-        <IonList>
-          {events.map((event) => (
-            <SecondEventItem setEvent={(event: any) => setEvnt(event)} event={event} key={event.eventId} />
-
-          ))}
-        </IonList>
-      </IonCol>
-      <IonCol size="12" sizeMd="6" id="subject-container">
-        {event ? (
+        <IonCol size="12" sizeMd="6" id="subject-container">
           <IonCol className="subject-container">
-            <EventInfo data={event} />
+          <IonList>
+            {events.map((event) => (
+              <SecondEventItem setEvent={(event: any) => setEvnt(event)} event={event} key={event.eventId} />
+
+            ))}
+          </IonList>
           </IonCol>
-        ) : (
-          <>
+        </IonCol>
+        <IonCol size="12" sizeMd="6" id="subject-container">
+          {event ? (
+            <IonCol className="subject-container">
+              <EventInfo data={event} />
+            </IonCol>
+          ) : (
+
             <IonCol size="12">
               <center>
                 <IonImg style={{ width: "50%" }} src="/svg/church_hive_icon.svg" />
@@ -42,9 +44,9 @@ const SecondEventsList: React.FC<EventListProps> = ({ events }) => {
                 </p>
               </center>
             </IonCol>
-          </>
-        )}
-      </IonCol>
+
+          )}
+        </IonCol>
       </IonRow>
     </>
   );

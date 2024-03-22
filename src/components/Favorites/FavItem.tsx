@@ -53,8 +53,8 @@ const FavItem: React.FC<ContainerProps> = ({
       function sortByDate(events: Event[]): Event[] {
         return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
       }
-      let sortedEvents: Event[] = sortByDate(Events)
-      return sortedEvents.map((event) => {
+      let multipleEvents = sortByDate(Events)
+      return multipleEvents.map((event) => {
 
         const thisIsoDate = new Date(convertUtcToLocal(event.date))
         const isoDate = new Date(thisIsoDate);

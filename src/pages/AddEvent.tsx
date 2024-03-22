@@ -19,7 +19,7 @@ import {
 } from "@ionic/react";
 import { useHistory } from "react-router-dom";
 import PageHeader from "../components/Global/PageHeader";
-import { EventContext, NewEvent } from "../context/eventContext";
+import { EventContext, NewEvent, TriggerInfo } from "../context/eventContext";
 import { ChurchUserContext } from "../context/churchUserContext";
 import { useFetchChurchUser } from "../hooks/useFetchChurchUser";
 import styles from "../theme/forms.module.css";
@@ -32,16 +32,22 @@ const AddEvent: React.FC = () => {
   const today: Date = new Date();
 
   const [displayedImg, setDisplayedImg] = useState("/svg/church_hive_icon.svg")
+  const [isDateChecked, setIsDateChecked] = useState(false)
+  const [isMultiDate, setIsMultiDate] = useState(false)
+  const [isDayChecked, setIsDayChecked] = useState(false)
+  const [isWeekChecked, setIsWeekChecked] = useState(false)
   const [newEvent, setNewEvent] = useState<NewEvent>({
     churchId: 0,
     eventTitle: "",
     date: today.toISOString(),
+    endDate: null,
     location: {
       street: "",
       city: "",
       state: "",
       zip: "",
     },
+    eventAudience: "",
     eventType: "",
     description: "",
     imageUrl: "",
@@ -67,10 +73,11 @@ const AddEvent: React.FC = () => {
   })
 
   const [localDate, setLocalDate] = useState<string>("");
+  const [localEndDate, setLocalEndDate] = useState<string>("");
   const [touchedFields, setTouchedFields] = useState<string[]>([]);
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [message, setMessage] = useState<string>()
-  const [dateDeleteNoti, setDateDeleteNoti] = useState(false)
 
   const history = useHistory();
 
@@ -89,7 +96,17 @@ const AddEvent: React.FC = () => {
         date: isoDate,
       }));
       setLocalDate(localDate);
-      setDateDeleteNoti(true)
+    } else if (name === "endDate") {
+      const isoDate = value as string;
+      const localDate = new Date(isoDate).toLocaleString("en-US", {
+        dateStyle: "full",
+        timeStyle: "short",
+      });
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        endDate: isoDate,
+      }));
+      setLocalEndDate(localDate);
     } else if (name.startsWith("location.")) {
       const key = name.split(".")[1];
       setNewEvent((prevEvent) => ({
@@ -145,49 +162,70 @@ const AddEvent: React.FC = () => {
     Submit(evnt)
   };
 
-  async function Submit(evnt: any) {
-    let resp = await createEvent(evnt);
+  async function resettingInputs() {
+    setLocalDate("")
+    setLocalEndDate("")
+    setMessage(undefined)
+    setNewEvent({
+      churchId: 0,
+      eventTitle: "",
+      date: "",
+      endDate: null,
+      location: {
+        street: "",
+        city: "",
+        state: "",
+        zip: "",
+      },
+      eventAudience: "",
+      eventType: "",
+      description: "",
+      imageUrl: "",
+    })
+    setChurch({
+      churchId: 0,
+      userId: 0,
+      churchName: "",
+      denomination: "",
+      location: {
+        street: "",
+        city: "",
+        state: "",
+        zip: ""
+      },
+      phoneNumber: "",
+      churchEmail: "",
+      welcomeMessage: "",
+      serviceTime: "",
+      imageUrl: "",
+      website: ""
+    })
+    setDisplayedImg("/svg/church_hive_icon.svg")
+    setIsDateChecked(false)
+    setIsDayChecked(false)
+    setIsWeekChecked(false)
+  }
+
+async function Submit(evnt: any) {
+    let triggerInfo: TriggerInfo = {
+      body: "Come join us for an upcoming event!",
+      title: church.churchName,
+      dayBefore: isDayChecked,
+      weekBefore: isWeekChecked
+    }
+
+    let resp = await createEvent(evnt, triggerInfo);
+    console.log(resp)
     if (resp) {
-      setMessage(undefined)
-      history.push(`/events`);
-      setNewEvent({
-        churchId: 0,
-        eventTitle: "",
-        date: today.toISOString(),
-        location: {
-          street: "",
-          city: "",
-          state: "",
-          zip: "",
-        },
-        eventType: "",
-        description: "",
-        imageUrl: "",
+
+      await resettingInputs().then(() => {
+        history.push(`/events`);
       })
-      setChurch({
-        churchId: 0,
-        userId: 0,
-        churchName: "",
-        denomination: "",
-        location: {
-          street: "",
-          city: "",
-          state: "",
-          zip: ""
-        },
-        phoneNumber: "",
-        churchEmail: "",
-        welcomeMessage: "",
-        serviceTime: "",
-        imageUrl: "",
-        website: ""
-      })
-      setDisplayedImg("/svg/church_hive_icon.svg")
-      setDateDeleteNoti(false)
     } else {
       setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
     }
   }
+
 
   const isFieldTouched = (name: string) => {
     return touchedFields.includes(name);
@@ -207,6 +245,182 @@ const AddEvent: React.FC = () => {
     }
   }, [newEvent.churchId]);
 
+  function isSameDay(date1ISO: string, date2: Date) {
+    const date1 = new Date(date1ISO);
+
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
+  function is8DaysBefore(dateString: string): boolean {
+    // Convert the string input to a Date object
+    const dateInput = new Date(dateString);
+
+    // Get the current date and time
+    const currentDate = new Date();
+
+    // Calculate the difference in milliseconds
+    const timeDifference = dateInput.getTime() - currentDate.getTime();
+
+    // Calculate the difference in days
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+    // Check if the difference is within 8 days or less
+    return daysDifference >= 0 && daysDifference <= 8;
+  }
+
+  function handleIsDateChecked() {
+
+    if (!isDateChecked) {
+      setIsDateChecked(true);
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        location: {
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+        },
+      }));
+
+      // The timers are because the amound off callbacks are unpredictable from the Ioncheckbox
+      setTimeout(() => {
+        setIsDateChecked(false);
+      }, 50);
+    } else {
+      setIsDateChecked(false);
+      setNewEvent((prevEvent) => ({
+        ...prevEvent,
+        location: church.location
+      }));
+
+      setTimeout(() => {
+        setIsDateChecked(true);
+      }, 50);
+    }
+  }
+
+  function handleIsDayChecked() {
+
+    if (!isDayChecked) {
+      setIsDayChecked(false)
+
+      setTimeout(() => {
+        setIsDayChecked(true);
+      }, 50);
+    } else {
+      setIsDayChecked(true);
+
+      setTimeout(() => {
+        setIsDayChecked(false);
+      }, 50);
+    }
+  }
+
+  function handleIsWeekChecked() {
+
+    if (!isWeekChecked) {
+      setIsWeekChecked(false)
+
+      setTimeout(() => {
+        setIsWeekChecked(true);
+      }, 50);
+    } else {
+      setIsWeekChecked(true);
+
+      setTimeout(() => {
+        setIsWeekChecked(false);
+      }, 50);
+    }
+  }
+
+  function handleIsMultiDateChecked() {
+
+    if (!isMultiDate) {
+      setIsMultiDate(true);
+
+      setTimeout(() => {
+        setIsMultiDate(false);
+        setNewEvent((prevEvent) => ({
+          ...prevEvent,
+          endDate: null
+        }));
+        setLocalEndDate("")
+      }, 50);
+    } else {
+      setIsMultiDate(false);
+
+      setTimeout(() => {
+        setIsMultiDate(true);
+      }, 50);
+    }
+  }
+
+
+  function returnNotiDay() {
+    if (!isSameDay(newEvent.date, new Date)) {
+      return (
+        <>
+          <IonCheckbox justify="space-between"
+            checked={isDayChecked}
+            onClick={() => {
+              handleIsDayChecked()
+            }}
+          >Send a notification the day before
+          </IonCheckbox>
+        </>
+
+      )
+    } else {
+      return (
+        <>
+          <IonCheckbox justify="space-between"
+            disabled
+          >Send a notification the day before
+          </IonCheckbox>
+        </>
+      )
+    }
+  }
+
+  function returnNotiWeek() {
+    if (!isSameDay(newEvent.date, new Date)) {
+      if (is8DaysBefore(newEvent.date)) {
+        return (
+          <>
+            <IonCheckbox justify="space-between"
+              disabled
+            >Send a notification the week before
+            </IonCheckbox>
+          </>
+        )
+      } else {
+        return (
+          <>
+            <IonCheckbox justify="space-between"
+              checked={isWeekChecked}
+              onClick={() => {
+                handleIsWeekChecked()
+              }}
+            >Send a notification the week before
+            </IonCheckbox>
+          </>
+        )
+      }
+    } else {
+      return (
+        <>
+          <IonCheckbox justify="space-between"
+            disabled
+          >Send a notification the week before
+          </IonCheckbox>
+        </>
+      )
+    }
+  }
 
   return (
     <IonPage>
@@ -306,7 +520,6 @@ const AddEvent: React.FC = () => {
                 labelPlacement="floating"
                 value={newEvent.eventTitle}
                 onIonInput={(e) => {
-                  console.log(church)
                   const inputValue = e.detail.value;
                   if (inputValue) {
                     if (inputValue.slice(-1) === " ") {
@@ -319,35 +532,81 @@ const AddEvent: React.FC = () => {
               />
             </IonCol>
             <IonCol size="12">
-              <IonInput
-                className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
-                  }`}
-                required
-                type="text"
-                placeholder=""
-                label="Event Date and Time"
-                labelPlacement="floating"
-                value={localDate}
-                readonly
-                onClick={() => setShowDatePicker(true)}
-                onBlur={() => handleInputBlur("date")}
-              />
-              <IonModal isOpen={showDatePicker}>
-                <IonDatetime
-                  color="primary"
-                  value={newEvent.date}
-                  title="Event Date"
-                  showDefaultTitle={true}
-                  showDefaultButtons={true}
-                  onIonChange={(e) => {
-                    handleInputChange("date", e.detail.value as string);
-                    setShowDatePicker(false);
+              <IonItem>
+                <IonCheckbox justify="space-between"
+                  checked={isMultiDate}
+                  onClick={() => {
+                    handleIsMultiDateChecked()
                   }}
-                />
-              </IonModal>
+                >Is the event multiple days?</IonCheckbox>
+              </IonItem>
             </IonCol>
-            {dateDeleteNoti ? (
-              <IonCol>
+            {isMultiDate ? (
+              <>
+                <IonCol size="6">
+                  <IonItem>
+                    <IonInput
+                      className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                        }`}
+                      required
+                      type="text"
+                      placeholder=""
+                      label="Start Event Date"
+                      labelPlacement="floating"
+                      value={localDate}
+                      readonly
+                      onClick={() => setShowDatePicker(true)}
+                      onBlur={() => handleInputBlur("date")}
+                    />
+                    <IonModal isOpen={showDatePicker}>
+                      <IonDatetime
+                        color="primary"
+                        value={newEvent.date}
+                        title="Event Start Date"
+                        showDefaultTitle={true}
+                        showDefaultButtons={true}
+                        onIonCancel={() => {
+                          setShowDatePicker(false);
+                        }}
+                        onIonChange={(e) => {
+                          handleInputChange("date", e.detail.value as string);
+                          setShowDatePicker(false);
+                        }}
+                      />
+                    </IonModal>
+                  </IonItem>
+                </IonCol>
+                <IonCol size="6">
+                  <IonItem>
+                    <IonInput
+                      className={`ion-input-field ${isFieldTouched("endDate") ? "" : "ion-untouched"
+                        }`}
+                      required
+                      type="text"
+                      placeholder=""
+                      label="End Event Date"
+                      labelPlacement="floating"
+                      value={localEndDate}
+                      readonly
+                      onClick={() => setShowEndDatePicker(true)}
+                      onBlur={() => handleInputBlur("endDate")}
+                    />
+                    <IonModal isOpen={showEndDatePicker}>
+                      <IonDatetime
+                        color="primary"
+                        value={newEvent.endDate}
+                        title="Event End Date"
+                        showDefaultTitle={true}
+                        showDefaultButtons={true}
+                        onIonCancel={() => setShowEndDatePicker(false)}
+                        onIonChange={(e) => {
+                          handleInputChange("endDate", e.detail.value as string);
+                          setShowEndDatePicker(false);
+                        }}
+                      />
+                    </IonModal>
+                  </IonItem>
+                </IonCol>
                 <IonItem>
                   <InformationCircleOutline
                     style={{ marginTop: "6px", marginRight: "10px" }}
@@ -356,30 +615,51 @@ const AddEvent: React.FC = () => {
                     width="35px"
                   />
                   <div style={{ color: "#c70000" }}>
-                    The event will be deleted a day after the event date!
+                    Please explain how your event times in the description
                   </div>
                 </IonItem>
-                <br />
-              </IonCol>
+              </>
             ) : (
-              <></>
+              <>
+                <IonCol size="12">
+                  <IonInput
+                    className={`ion-input-field ${isFieldTouched("date") ? "" : "ion-untouched"
+                      }`}
+                    required
+                    type="text"
+                    placeholder=""
+                    label="Event Date and Time"
+                    labelPlacement="floating"
+                    value={localDate}
+                    readonly
+                    onClick={() => setShowDatePicker(true)}
+                    onBlur={() => handleInputBlur("date")}
+                  />
+                  <IonModal isOpen={showDatePicker}>
+                    <IonDatetime
+                      color="primary"
+                      value={newEvent.date}
+                      title="Event Date"
+                      showDefaultTitle={true}
+                      showDefaultButtons={true}
+                      onIonCancel={() => setShowDatePicker(false)}
+                      onIonChange={(e) => {
+                        handleInputChange("date", e.detail.value as string);
+                        setShowDatePicker(false);
+                      }}
+                    />
+                  </IonModal>
+                </IonCol>
+              </>
             )}
-            <IonCol size="12">
+            <IonCol size='12'>
               <IonItem>
-                {church.churchId !== 0 ? (
-                  <IonCheckbox justify="space-between"
-                    onClick={() => {
-                      setNewEvent((prevEvent) => ({
-                        ...prevEvent,
-                        location: church.location
-                      }));
-                    }}
-                  >Address is the same as church</IonCheckbox>
-                ) : (
-                  <IonCheckbox justify="space-between"
-                    disabled
-                  >Address is the same as church</IonCheckbox>
-                )}
+                {returnNotiDay()}
+              </IonItem>
+            </IonCol>
+            <IonCol size='12'>
+              <IonItem>
+                {returnNotiWeek()}
               </IonItem>
             </IonCol>
             <IonCol size="12">
@@ -444,9 +724,7 @@ const AddEvent: React.FC = () => {
                 <IonSelectOption value="Arkansas">Arkansas</IonSelectOption>
                 <IonSelectOption value="California">California</IonSelectOption>
                 <IonSelectOption value="Colorado">Colorado</IonSelectOption>
-                <IonSelectOption value="Connecticut">
-                  Connecticut
-                </IonSelectOption>
+                <IonSelectOption value="Connecticut">Connecticut</IonSelectOption>
                 <IonSelectOption value="Delaware">Delaware</IonSelectOption>
                 <IonSelectOption value="Florida">Florida</IonSelectOption>
                 <IonSelectOption value="Georgia">Georgia</IonSelectOption>
@@ -534,6 +812,22 @@ const AddEvent: React.FC = () => {
               />
             </IonCol>
             <IonCol size="12">
+              <IonItem>
+                {church.churchId !== 0 ? (
+                  <IonCheckbox justify="space-between"
+                    checked={isDateChecked}
+                    onClick={() => {
+                      handleIsDateChecked()
+                    }}
+                  >Address is the same as church</IonCheckbox>
+                ) : (
+                  <IonCheckbox justify="space-between"
+                    disabled
+                  >Address is the same as church</IonCheckbox>
+                )}
+              </IonItem>
+            </IonCol>
+            <IonCol size="6">
               <IonSelect
                 className={`ion-input-field ${isFieldTouched("eventType") ? "" : "ion-untouched"
                   }`}
@@ -547,14 +841,31 @@ const AddEvent: React.FC = () => {
                 onBlur={() => handleInputBlur("eventType")}
               >
                 <IonSelectOption value="Family">Family</IonSelectOption>
+                <IonSelectOption value="Kids">Kids</IonSelectOption>
                 <IonSelectOption value="Youth">Youth</IonSelectOption>
-                <IonSelectOption value="Young Adults">
-                  Young Adults
-                </IonSelectOption>
+                <IonSelectOption value="Young Adults">Young Adults</IonSelectOption>
                 <IonSelectOption value="Single">Single</IonSelectOption>
                 <IonSelectOption value="Womans">Womans</IonSelectOption>
                 <IonSelectOption value="Mens">Mens</IonSelectOption>
                 <IonSelectOption value="Senior">Senior</IonSelectOption>
+              </IonSelect>
+            </IonCol>
+            <IonCol size="6">
+              <IonSelect
+                className={`ion-input-field ${isFieldTouched("eventAudience") ? "" : "ion-untouched"
+                  }`}
+                placeholder="Select Event Audience"
+                label="Event Audience"
+                labelPlacement="floating"
+                value={newEvent.eventAudience}
+                onIonChange={(e) =>
+                  handleInputChange("eventAudience", e.detail.value!)
+                }
+                onBlur={() => handleInputBlur("eventAudience")}
+              >
+                <IonSelectOption value="Everyone">Everyone</IonSelectOption>
+                <IonSelectOption value="Church-Wide">Church-Wide</IonSelectOption>
+                <IonSelectOption value="Church Group">Church Group</IonSelectOption>
               </IonSelect>
             </IonCol>
             <IonCol size="12">

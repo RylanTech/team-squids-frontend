@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { ChurchUser, ChurchUserContext, authHeader } from "./churchUserContext";
-import { AllEvents, Event } from "./eventContext";
+import { AllEvents } from "./eventContext";
 import Location from "../interfaces/Location";
 
 export interface Church {

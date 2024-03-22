@@ -15,6 +15,7 @@ import { ChurchContext } from "../context/churchContext";
 import { trashBin } from "ionicons/icons";
 import { ChurchUserContext } from "../context/churchUserContext";
 import SecondChurchList from "../components/Churches/SecondChurchList";
+import { PushNotifications, Token } from "@capacitor/push-notifications";
 
 const ChurchFinder: React.FC = () => {
   const { searchChurches, churches, getAllChurches } = useContext(ChurchContext);
@@ -45,8 +46,50 @@ const ChurchFinder: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    PushNotifications.checkPermissions().then((res) => {
+      if (res.receive !== 'granted') {
+        PushNotifications.requestPermissions().then((res) => {
+          if (res.receive === 'denied') {
+            console.log('Push Notification permission denied');
+          }
+          else {
+            console.log('Push Notification permission granted');
+            register();
+          }
+        });
+      } else {
+        register();
+      }
+    });
+  }, [])
+
+  const register = () => {
+    // Register with Apple / Google to receive push via APNS/FCM
+    PushNotifications.register();
+
+    PushNotifications.addListener('registration',
+      (token: Token) => {
+        console.log('Push registration success');
+
+        if (token) {
+          let strToken = token.value
+          localStorage.setItem('phoneToken', strToken)
+        } else {
+          console.log("No token to submit for notifications")
+        }
+
+      }
+    );
+
+    PushNotifications.addListener('registrationError',
+      (error: any) => {
+        console.log('Error on registration: ' + JSON.stringify(error));
+      }
+    );
+  }
+
   const handleSearch = async (searchQuery: string) => {
-    // Call function to search locations base on query
     await searchChurches(searchQuery)
   };
 
@@ -59,7 +102,7 @@ const ChurchFinder: React.FC = () => {
       if (width > 768) {
         return (
           <>
-          <SecondChurchList churches={churches} />
+            <SecondChurchList churches={churches} />
           </>
         )
       } else {
