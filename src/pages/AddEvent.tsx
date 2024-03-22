@@ -206,7 +206,7 @@ const AddEvent: React.FC = () => {
     setIsWeekChecked(false)
   }
 
-  async function Submit(evnt: any) {
+async function Submit(evnt: any) {
     let triggerInfo: TriggerInfo = {
       body: "Come join us for an upcoming event!",
       title: church.churchName,
@@ -225,6 +225,7 @@ const AddEvent: React.FC = () => {
       setMessage("All feilds must be entered. If you still have issues, try logging out and logging back in.")
     }
   }
+
 
   const isFieldTouched = (name: string) => {
     return touchedFields.includes(name);

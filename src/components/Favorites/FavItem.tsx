@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { IonIcon, IonItem, IonLabel, IonList, IonThumbnail } from "@ionic/react";
-import { createOutline } from "ionicons/icons";
+
 import { ChurchWithEvents } from "../../context/churchContext";
 import { ChurchUserContext } from "../../context/churchUserContext";
-import { Event } from "../../context/eventContext";
+import { AllEvents, Event } from "../../context/eventContext";
+import { createOutline } from "ionicons/icons";
 
 interface ContainerProps {
   church: ChurchWithEvents;
