@@ -21,7 +21,7 @@ export const AppUserContext = createContext<AppUserContextProps>({
     updateAppUser: () => Promise.resolve(),
 });
 
-// const BASE_URL = "https://churchhive.net/api/appuser/";
+// const BASE_URL = "https://churchhive.net/api/appuser/"/;
 const BASE_URL = "http://localhost:3001/api/appuser/";
 
 

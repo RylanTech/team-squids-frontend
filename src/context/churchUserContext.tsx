@@ -26,6 +26,18 @@ export interface NewChurchUser {
   lastName: string;
 }
 
+export interface OneArticle {
+  title: string,
+  body: string,
+  createdAt: Date,
+  updatedAt: Date,
+  articleId: number
+}
+
+export interface Articles extends OneArticle {
+  OneArticle: OneArticle[]
+}
+
 export interface LoginChurchUser {
   email: string;
   password: string;
@@ -48,6 +60,7 @@ interface ChurchUserContextProps {
   setCurrentUserId: Dispatch<SetStateAction<number>>;
   verifyCurrentUser: () => Promise<decoded | null>;
   createChurchUser: (newUser: NewChurchUser) => Promise<NewChurchUser>;
+  getArticles: () => Promise<void>;
   getChurchUser: (userId: number) => Promise<OneChurchUser>;
   updateChurchUser: (updatedUser: ChurchUser) => Promise<ChurchUser>;
   deleteChurchUser: (userId: number) => Promise<void>;
@@ -65,7 +78,8 @@ export const ChurchUserContext = createContext<ChurchUserContextProps>({
   currentUserId: 0,
   apiKey: "apiKey",
   getApiKey: () => Promise.resolve(), // Update the implementation to return a Promise<string>
-  setCurrentUserId: () => {},
+  setCurrentUserId: () => { },
+  getArticles: () => Promise.resolve(),
   verifyCurrentUser: () => Promise.resolve(null),
   createChurchUser: (newUser: NewChurchUser) => Promise.resolve(newUser),
   getChurchUser: (userId: number) => Promise.resolve({} as OneChurchUser),
@@ -78,8 +92,8 @@ export const ChurchUserContext = createContext<ChurchUserContextProps>({
 });
 
 
-const BASE_URL = "https://churchhive.net/api/user/";
-// const BASE_URL = "http://localhost:3001/api/user/";
+// const BASE_URL = "https://churchhive.net/api/user/";
+const BASE_URL = "http://localhost:3001/api/user/";
 
 export const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("myChurchUserToken")}`,
@@ -107,7 +121,7 @@ export const ChurchUserProvider = ({
         if (response.status === 200) {
           let decoded: decoded = await jwt_decode(LOGIN_TOKEN);
           setCurrentUserId(decoded.userId);
-          setIsLoggedIn(true); 
+          setIsLoggedIn(true);
           return decoded;
         } else {
           localStorage.removeItem("myChurchUserToken");
@@ -132,14 +146,29 @@ export const ChurchUserProvider = ({
       throw error;
     }
   };
-  
-  const handlePhoneId = async (phoneId: any) => {
+
+  const getArticles = async (): Promise<void> => {
+    const getArticlesURL = `http://localhost:3001/api/article/`;
+    console.log(getArticlesURL)
     try {
-      axios.post(BASE_URL + 'deviceid', { phoneId });
+      const response = await axios.get(getArticlesURL, {
+        headers: authHeader()
+      });
+      console.log(response)
+      return response.data;
     } catch (error: any) {
-      return
+      throw error;
     }
   };
+
+
+  // const handlePhoneId = async (phoneId: any) => {
+  //   try {
+  //     axios.post(BASE_URL + 'deviceid', { phoneId });
+  //   } catch (error: any) {
+  //     return
+  //   }
+  // };
 
   const createChurchUser = async (newUser: NewChurchUser) => {
     const newUserURL = `${BASE_URL}create-account`;
@@ -229,6 +258,7 @@ export const ChurchUserProvider = ({
         currentUserId,
         apiKey,
         getApiKey,
+        getArticles,
         setCurrentUserId,
         verifyCurrentUser,
         createChurchUser,

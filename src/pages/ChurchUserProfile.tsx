@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 
 import LoadingSpinner from "../components/Global/LoadingSpinner";
@@ -18,9 +18,10 @@ import ChurchList from "../components/Churches/ChurchList";
 import ChurchUserInfo from "../components/ChurchUsers/ChurchUserInfo";
 import EventsList from "../components/Events/EventsLists";
 import { useFetchChurchUser } from "../hooks/useFetchChurchUser";
-import { ChurchUserContext } from "../context/churchUserContext";
+import { Articles, ChurchUserContext } from "../context/churchUserContext";
 import { EventContext } from "../context/eventContext";
 import styles from "../theme/forms.module.css";
+import NewsFeedList from "../components/ChurchUsers/NewsFeedList";
 
 interface ChurchUserRouteParams {
   userId: string;
@@ -29,13 +30,13 @@ interface ChurchUserRouteParams {
 const UserProfile: React.FC = () => {
   const params = useParams<ChurchUserRouteParams>();
   let history = useHistory();
-
+  const [articles, setArticles] = useState<any>()
   const { churchUser, loadingStatus, error } = useFetchChurchUser(
     parseInt(params.userId)
   );
   const { userEvents } = useContext(EventContext);
 
-  const { checkCurrentUser, verifyCurrentUser, logoutChurchUser } = useContext(ChurchUserContext);
+  const { checkCurrentUser, verifyCurrentUser, getArticles } = useContext(ChurchUserContext);
 
 
   useIonViewWillEnter(() => {
@@ -49,10 +50,27 @@ const UserProfile: React.FC = () => {
     checkingUserId();
   });
 
+  useEffect(() => {
+    async function gettingArticles() {
+      let arts = await getArticles()
+      setArticles(arts)
+    }
+    gettingArticles()
+  }, [])
+
   async function handleLogout() {
     localStorage.removeItem("myChurchUserToken");
     verifyCurrentUser();
     history.push(`/churches`);
+  }
+
+  function ifArticles() {
+    if (articles) {
+      console.log(articles)
+    }
+    return (
+      <></>
+    )
   }
 
   return (
@@ -100,11 +118,11 @@ const UserProfile: React.FC = () => {
             </IonCol>
           </IonRow>
           <IonRow>
-          <IonCol size="12">
+            <IonCol size="12">
               <div className={styles.addButton}>
                 <h4>News feed</h4>
-              </div>
-              
+              </div> 
+              {articles && articles.length > 0 && <NewsFeedList articles={articles} />}
             </IonCol>
           </IonRow>
           <IonCol>
