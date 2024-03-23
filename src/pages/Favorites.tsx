@@ -27,7 +27,6 @@ const Favorites: React.FC = () => {
 
   function isFav() {
     let i = localStorage.getItem("favoriteChurches")
-    console.log(i)
     if (!i) {
       return (
         <center>

@@ -64,15 +64,6 @@ const UserProfile: React.FC = () => {
     history.push(`/churches`);
   }
 
-  function ifArticles() {
-    if (articles) {
-      console.log(articles)
-    }
-    return (
-      <></>
-    )
-  }
-
   return (
     <IonPage>
       <ErrorAlert error={error} />

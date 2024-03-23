@@ -11,9 +11,9 @@ const NewsFeedList: FC<NewsFeedListProps> = ( { articles } ) => {
 
   return (
     <IonList>
-      {articles.map((article: OneArticle) => (
-        <NewsFeedItem article={article}/>
-      ))}
+      {articles.map((article: OneArticle) => {
+        return <NewsFeedItem article={article} key={article.ArticleId}/>
+      })}
     </IonList>
   );
 };

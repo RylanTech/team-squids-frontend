@@ -12,17 +12,11 @@ const NewsFeedItem: React.FC<ContainerProps> = ({
     updatedAt,
     title,
     body,
-    articleId
+    ArticleId
   },
 }) => {
-  const { currentUserId } = useContext(ChurchUserContext);
-  function convertUtcToLocal(utcDateString: any) {
-    const utcDate = new Date(utcDateString);
-    const localDate = new Date(utcDate.getTime() + utcDate.getTimezoneOffset() * 60000);
-    return localDate;
-  }
 
-  const thisIsoDate = new Date(convertUtcToLocal(createdAt))
+  const thisIsoDate = new Date(createdAt)
   const isoDate = new Date(thisIsoDate);
   const formatDate = Intl.DateTimeFormat("en-us", {
     dateStyle: "long",
@@ -39,7 +33,7 @@ const NewsFeedItem: React.FC<ContainerProps> = ({
 
   return (
     <IonItem
-      routerLink={`/article/${articleId}`}
+      routerLink={`/article/${ArticleId}`}
       button
     >
       <IonLabel>

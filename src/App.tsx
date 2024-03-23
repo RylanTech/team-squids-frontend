@@ -38,6 +38,7 @@ import EditEvent from "./pages/EditEvent";
 import UserAuth from "./pages/UserAuth";
 import EditUser from "./pages/EditUser";
 import Favorites from "./pages/Favorites";
+import Article from "./pages/Article";
 
 setupIonicReact();
 
@@ -64,6 +65,8 @@ const App: React.FC = () => {
             <Route path="/users" component={UserAuth} />
 
             <Route path="/favorites" component={Favorites} />
+
+            <Route path="/article/:articleId" component={Article} />
             
             <Route exact path="/" render={() => <Redirect to="/churches" />} />
 

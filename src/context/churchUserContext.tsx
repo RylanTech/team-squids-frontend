@@ -31,7 +31,7 @@ export interface OneArticle {
   body: string,
   createdAt: Date,
   updatedAt: Date,
-  articleId: number
+  ArticleId: number
 }
 
 export interface Articles extends OneArticle {
@@ -61,6 +61,7 @@ interface ChurchUserContextProps {
   verifyCurrentUser: () => Promise<decoded | null>;
   createChurchUser: (newUser: NewChurchUser) => Promise<NewChurchUser>;
   getArticles: () => Promise<void>;
+  getArticle: (articleId: number) => Promise<void>
   getChurchUser: (userId: number) => Promise<OneChurchUser>;
   updateChurchUser: (updatedUser: ChurchUser) => Promise<ChurchUser>;
   deleteChurchUser: (userId: number) => Promise<void>;
@@ -80,6 +81,7 @@ export const ChurchUserContext = createContext<ChurchUserContextProps>({
   getApiKey: () => Promise.resolve(), // Update the implementation to return a Promise<string>
   setCurrentUserId: () => { },
   getArticles: () => Promise.resolve(),
+  getArticle: () => Promise.resolve(),
   verifyCurrentUser: () => Promise.resolve(null),
   createChurchUser: (newUser: NewChurchUser) => Promise.resolve(newUser),
   getChurchUser: (userId: number) => Promise.resolve({} as OneChurchUser),
@@ -149,7 +151,18 @@ export const ChurchUserProvider = ({
 
   const getArticles = async (): Promise<void> => {
     const getArticlesURL = `http://localhost:3001/api/article/`;
-    console.log(getArticlesURL)
+    try {
+      const response = await axios.get(getArticlesURL, {
+        headers: authHeader()
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  };
+
+  const getArticle = async (articleId: number): Promise<void> => {
+    const getArticlesURL = `http://localhost:3001/api/article/${articleId}`;
     try {
       const response = await axios.get(getArticlesURL, {
         headers: authHeader()
@@ -259,6 +272,7 @@ export const ChurchUserProvider = ({
         apiKey,
         getApiKey,
         getArticles,
+        getArticle,
         setCurrentUserId,
         verifyCurrentUser,
         createChurchUser,
