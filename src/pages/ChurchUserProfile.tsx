@@ -36,27 +36,20 @@ const UserProfile: React.FC = () => {
   );
   const { userEvents } = useContext(EventContext);
 
-  const { checkCurrentUser, verifyCurrentUser, getArticles } = useContext(ChurchUserContext);
+  const { verifyCurrentUser, getArticles } = useContext(ChurchUserContext);
 
 
   useIonViewWillEnter(() => {
-    async function checkingUserId() {
-      let isChecked = await verifyCurrentUser();
-      console.log(isChecked)
-      if (isChecked === null) {
-        history.push("/users")
+    async function gettingArticles() {
+      let arts: any = await getArticles()
+      if (arts === false) {
+        handleLogout()
+      } else {
+        setArticles(arts)
       }
     }
-    checkingUserId();
-  });
-
-  useEffect(() => {
-    async function gettingArticles() {
-      let arts = await getArticles()
-      setArticles(arts)
-    }
     gettingArticles()
-  }, [])
+  });
 
   async function handleLogout() {
     localStorage.removeItem("myChurchUserToken");

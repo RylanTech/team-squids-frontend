@@ -128,7 +128,7 @@ const EventInfo: React.FC<EventInfoProps> = ({
           <p>
             {eventDay}, {eventDate}
           </p>
-          Through
+          -
           <p>
             {eventEndDay}, {eventEndDate}
           </p>

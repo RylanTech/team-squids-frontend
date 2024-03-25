@@ -149,7 +149,7 @@ export const ChurchUserProvider = ({
     }
   };
 
-  const getArticles = async (): Promise<void> => {
+  const getArticles = async (): Promise<any> => {
     const getArticlesURL = `http://localhost:3001/api/article/`;
     try {
       const response = await axios.get(getArticlesURL, {
@@ -167,7 +167,6 @@ export const ChurchUserProvider = ({
       const response = await axios.get(getArticlesURL, {
         headers: authHeader()
       });
-      console.log(response)
       return response.data;
     } catch (error: any) {
       throw error;
