@@ -94,8 +94,8 @@ export const ChurchUserContext = createContext<ChurchUserContextProps>({
 });
 
 
-// const BASE_URL = "https://churchhive.net/api/user/";
-const BASE_URL = "http://localhost:3001/api/user/";
+const BASE_URL = "https://churchhive.net/api/user/";
+// const BASE_URL = "http://localhost:3001/api/user/";
 
 export const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("myChurchUserToken")}`,
@@ -150,7 +150,7 @@ export const ChurchUserProvider = ({
   };
 
   const getArticles = async (): Promise<any> => {
-    const getArticlesURL = `http://localhost:3001/api/article/`;
+    const getArticlesURL = `https://churchhive.net/api/article/`;
     try {
       const response = await axios.get(getArticlesURL, {
         headers: authHeader()
@@ -162,7 +162,7 @@ export const ChurchUserProvider = ({
   };
 
   const getArticle = async (articleId: number): Promise<void> => {
-    const getArticlesURL = `http://localhost:3001/api/article/${articleId}`;
+    const getArticlesURL = `https://churchhive.net/api/article/${articleId}`;
     try {
       const response = await axios.get(getArticlesURL, {
         headers: authHeader()

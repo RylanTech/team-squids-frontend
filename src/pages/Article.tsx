@@ -6,6 +6,7 @@ import styles from "../theme/forms.module.css";
 
 
 const Article: FC = () => {
+  
   const [article, setArticle] = useState<any>()
 
   interface ArticleRouteParams {
@@ -57,6 +58,11 @@ const Article: FC = () => {
     }
   }
 
+  function convertLinksToAnchorTags(text: string) {
+    const regex = /((http|https):\/\/[^\s]+)/g;
+    return text.replace(regex, (match, url) => `<a href="${url}" target="_blank">${url}</a>`);
+  }
+
 
   return (
     <IonPage>
@@ -95,9 +101,7 @@ const Article: FC = () => {
                     </h2>
                   </center>
                   <br />
-                  <div style={{ whiteSpace: 'pre-line' }}>
-                    {article.body}
-                  </div>
+                  <div style={{ whiteSpace: 'pre-line' }} dangerouslySetInnerHTML={{ __html: convertLinksToAnchorTags(article.body) }} />
                   <br /><br /><br /><br />
                   <center>
                     {ifUpdated(article.updatedAt)}
